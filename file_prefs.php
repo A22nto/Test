@@ -92,7 +92,7 @@ function getPref($data_dir, $username, $string, $default = '') {
     $result = do_hook_function('get_pref_override',array($username, $string));
 //FIXME: testing below for !$result means that a plugin cannot fetch its own pref value of 0, '0', '', FALSE, or anything else that evaluates to boolean FALSE.
     if (!$result) {
-        cachePrefValues(htmlspecialchars($data_dir), $username);
+        cachePrefValues(htmlspecialchars($data_dir), htmlspecialchars($username));
         if (isset($prefs_cache[$string])) {
             $result = $prefs_cache[$string];
         } else {
@@ -257,7 +257,7 @@ function getSig($data_dir, $username, $number) {
     $sig = '';
     if (file_exists($filename)) {
         /* Open the file, or else display an error to the user. */
-        if(!$file = @fopen($filename, 'r'))
+        if(!$file = @fopen(htmlspecialchars($filename), 'r'))
         {
             logout_error( sprintf( _("Signature file, %s, could not be opened. Contact your system administrator to resolve this issue."), htmlspecialchars($filename)) );
             exit;
