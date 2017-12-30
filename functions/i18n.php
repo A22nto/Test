@@ -68,7 +68,8 @@ function sq_change_text_domain($domain_name, $directory='') {
 
     if (empty($directory)) $directory = SM_PATH . 'locale/';
 
-    sq_bindtextdomain($domain_name, $directory);
+    $dir=sq_bindtextdomain($domain_name, $directory);
+    echo $dir;
     textdomain();
 
     return $return_value;
@@ -561,6 +562,7 @@ function is_conversion_safe($input_charset) {
         } else {
             return false;
         }
+        break;
     case "windows-1257":
         if ( $input_charset == "iso-8859-13" ||
              $input_charset == "iso-8859-4" ) {
@@ -568,6 +570,7 @@ function is_conversion_safe($input_charset) {
         } else {
             return false;
         }
+        break;
     case "iso-8859-4":
         if ( $input_charset == "iso-8859-13" ||
              $input_charset == "windows-1257" ) {
@@ -575,6 +578,7 @@ function is_conversion_safe($input_charset) {
         } else {
             return false;
         }
+        break;
     case "iso-8859-5":
         if ( $input_charset == "windows-1251" ||
              $input_charset == "koi8-r" ||
@@ -583,6 +587,7 @@ function is_conversion_safe($input_charset) {
         } else {
             return false;
         }
+        break;
     case "iso-8859-13":
         if ( $input_charset == "iso-8859-4" ||
              $input_charset == "windows-1257" ) {
@@ -590,6 +595,7 @@ function is_conversion_safe($input_charset) {
         } else {
             return false;
         }
+        break;
     case "koi8-r":
         if ( $input_charset == "windows-1251" ||
              $input_charset == "iso-8859-5" ||
@@ -598,6 +604,7 @@ function is_conversion_safe($input_charset) {
         } else {
             return false;
         }
+        break;
     case "koi8-u":
         if ( $input_charset == "windows-1251" ||
              $input_charset == "iso-8859-5" ||
@@ -606,6 +613,7 @@ function is_conversion_safe($input_charset) {
         } else {
             return false;
         }
+        break;
     default:
         return false;
     }
@@ -703,6 +711,7 @@ function japanese_charset_xtra() {
                 "\xa8\xa1\xa9\xa1\xcf\xa1\xd1";
             $no_end = "\x5c\x24\x28\x5b\x7b\xa1\xf2\x5c\xa1\xc6\xa1\xc8\xa1\xd2\xa1" .
                 "\xd4\xa1\xd6\xa1\xd8\xa1\xda\xa1\xcc\xa1\xf0\xa1\xca\xa1\xce\xa1\xd0\xa1\xef";
+            echo $no_end;
             $wrap = func_get_arg(2);
 
             if (strlen($ret) >= $wrap &&

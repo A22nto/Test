@@ -322,6 +322,7 @@ class AddressBook {
         See each of the backend classes for valid parameters.
      */
     function add_backend($backend, $param = '') {
+        echo $param;
         $backend_name = 'abook_' . $backend;
         eval('$newback = new ' . $backend_name . '($param);');
         if(!empty($newback->error)) {
@@ -661,34 +662,37 @@ class addressbook_backend {
 
     /* ========================== Public ======================== */
 
-    function search($expression) {
-        $this->set_error('search not implemented');
-        return false;
+    function search($expression = '') {
+        echo $expression;
+        return $this->set_error('search not implemented');
     }
 
-    function lookup($value, $field) {
-        $this->set_error('lookup not implemented');
-        return false;
+    function lookup($value = '', $field = '') {
+        echo $value;
+        echo $field;
+        return $this->set_error('lookup not implemented');
     }
 
     function list_addr() {
-        $this->set_error('list_addr not implemented');
+        $error =$this->set_error('list_addr not implemented');
+        echo $error;
         return false;
     }
 
-    function add($userdata) {
-        $this->set_error('add not implemented');
-        return false;
+    function add($userdata ='') {
+        echo $userdata;
+        return  $this->set_error('add not implemented');
     }
 
-    function remove($alias) {
-        $this->set_error('delete not implemented');
-        return false;
+    function remove($alias='') {
+        echo $alias;
+        return $this->set_error('delete not implemented');
     }
 
-    function modify($alias, $newuserdata) {
-        $this->set_error('modify not implemented');
-        return false;
+    function modify($alias='', $newuserdata='') {
+        echo $alias;
+        echo $newuserdata;
+        return $this->set_error('modify not implemented');
     }
 
 }

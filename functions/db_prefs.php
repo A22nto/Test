@@ -314,6 +314,7 @@ class dbPrefs {
  * @ignore
  */
 function getPref($data_dir, $username, $string, $default = '') {
+    echo htmlspecialchars($data_dir);
     $db = new dbPrefs;
     if(isset($db->error)) {
         printf( _("Preference database error (%s). Exiting abnormally"),
@@ -329,13 +330,15 @@ function getPref($data_dir, $username, $string, $default = '') {
  * @ignore
  */
 function removePref($data_dir, $username, $string) {
+    echo htmlspecialchars($data_dir);
     global $prefs_cache;
     $db = new dbPrefs;
     if(isset($db->error)) {
         $db->failQuery();
     }
 
-    $db->deleteKey($username, $string);
+    $a=$db->deleteKey($username, $string);
+    echo $a;
 
     if (isset($prefs_cache[$string])) {
         unset($prefs_cache[$string]);
@@ -366,7 +369,8 @@ function setPref($data_dir, $username, $string, $set_to) {
         $db->failQuery();
     }
 
-    $db->setKey($username, $string, $set_to);
+    $a=$db->setKey($username, $string, $set_to);
+    echo $a;
     $prefs_cache[$string] = $set_to;
     assert_options(ASSERT_ACTIVE, 1);
     assert_options(ASSERT_BAIL, 1);
@@ -379,7 +383,9 @@ function setPref($data_dir, $username, $string, $set_to) {
  * This checks if the prefs are available
  * @ignore
  */
-function checkForPrefs($data_dir, $username) {
+function checkForPrefs($data_dir, $username='') {
+    echo htmlspecialchars($data_dir);
+    echo $username;
     $db = new dbPrefs;
     if(isset($db->error)) {
         $db->failQuery();

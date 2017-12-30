@@ -16,7 +16,7 @@ if( ! file_exists ( 'config/config.php' ) ) {
     echo '<html><body><p><strong>ERROR:</strong> Config file ' .
         '&quot;<tt>config/config.php</tt>&quot; not found. You need to ' .
         'configure SquirrelMail before you can use it.</p></body></html>';
-    exit;
+        trigger_error('Configure Error',E_USER_ERROR);
 }
 
 // If we are, go ahead to the login page.

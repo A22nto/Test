@@ -71,7 +71,7 @@ if ((bool) ini_get('register_globals') &&
  */
 $php_session_auto_start = ini_get('session.auto_start');
 if ((bool)$php_session_auto_start && $php_session_auto_start != 'off') {
-    die('SquirrelMail 1.4.x is not compatible with PHP\'s session.auto_start setting.  Please disable it at least for the location where SquirrelMail is installed.');
+    trigger_error('SquirrelMail 1.4.x is not compatible with PHP\'s session.auto_start setting.  Please disable it at least for the location where SquirrelMail is installed.',E_USER_NOTICE);
 }
 
 /**
@@ -361,6 +361,7 @@ function sqgetGlobalVar($name, &$value, $search = SQ_INORDER) {
         } elseif ( $search == SQ_SESSION ) {
             break;
         }
+        break;
       case SQ_FORM:   // check post, get
       case SQ_POST:
         if( isset($_POST[$name]) ) {
@@ -369,6 +370,7 @@ function sqgetGlobalVar($name, &$value, $search = SQ_INORDER) {
         } elseif ( $search == SQ_POST ) {
           break;
         }
+        break;
       case SQ_GET:
         if ( isset($_GET[$name]) ) {
             $value = $_GET[$name];
@@ -438,6 +440,7 @@ function sqsession_destroy() {
     $sessid = session_id();
     if (!empty( $sessid )) {
         $_SESSION = array();
+        print_r($_SESSION);
         error_reporting(0);
         session_destroy();
     }

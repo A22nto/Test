@@ -309,8 +309,8 @@ class abook_local_file extends addressbook_backend {
             if (count($row)<5) {
                 /** address book is corrupted. */
                 global $color;
-                error_box(_("Address book is corrupted. Required fields are missing."),$color);
-                die('</body></html>');
+                error_box(_("Address book is corrupted. Required fields are missing.</body></html>"),$color);
+                trigger_error('Address book is corrupted. Required fields are missing.',E_USER_NOTICE);
             } else {
                 $line = join(' ', $row);
                 // errors on preg_match call are suppressed in order to prevent display of regexp compilation errors
@@ -362,8 +362,8 @@ class abook_local_file extends addressbook_backend {
             if (count($row)<5) {
                 /** address book is corrupted. */
                 global $color;
-                error_box(_("Address book is corrupted. Required fields are missing."),$color);
-                die('</body></html>');
+                error_box(_("Address book is corrupted. Required fields are missing.</body></html>"),$color);
+                trigger_error('Address book is corrupted. Required fields are missing.',E_USER_NOTICE);
             } else {
                 if(strtolower($row[$field]) == $value) {
                     return array('nickname'  => $row[0],
@@ -401,8 +401,8 @@ class abook_local_file extends addressbook_backend {
             if (count($row)<5) {
                 /** address book is corrupted. */
                 global $color;
-                error_box(_("Address book is corrupted. Required fields are missing."),$color);
-                die('</body></html>');
+                error_box(_("Address book is corrupted. Required fields are missing.</body></html>"),$color);
+                trigger_error('Address book is corrupted. Required fields are missing.',E_USER_NOTICE);
             } else {
                 array_push($res, array('nickname'  => $row[0],
                                        'name'      => $row[1] . ' ' . $row[2],

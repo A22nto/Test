@@ -131,7 +131,7 @@ function walkTreeInPreOrderDeleteFolders($index, $imap_stream, $tree) {
 /**
  * Recursively walk a tree of folders to create them under the trash folder.
  */
-function walkTreeInPostOrderCreatingFoldersUnderTrash($index, $imap_stream, $tree, $topFolderName) {
+function walkTreeInPostOrderCreatingFoldersUnderTrash($index, $imap_stream, $tree, $topFolderName, $uid_support) {
     global $trash_folder, $delimiter;
 
     $position = strrpos($topFolderName, $delimiter);
@@ -145,18 +145,18 @@ function walkTreeInPostOrderCreatingFoldersUnderTrash($index, $imap_stream, $tre
         $mbx_response = sqimap_mailbox_select($imap_stream, $tree[$index]['value']);
         $messageCount = $mbx_response['EXISTS'];
         if ($messageCount > 0) {
-            sqimap_msgs_list_copy($imap_stream, '1:*', $trash_folder . $delimiter . $subFolderName);
+            sqimap_msgs_list_copy($imap_stream, '1:*', $trash_folder . $delimiter . $subFolderName, $uid_support);
         }
         // after copy close the mailbox to get in unselected state
         sqimap_run_command($imap_stream,'CLOSE',false,$response,$message);
         for ($j = 0;$j < count($tree[$index]['subNodes']); $j++)
-            walkTreeInPostOrderCreatingFoldersUnderTrash($tree[$index]['subNodes'][$j], $imap_stream, $tree, $topFolderName);
+            walkTreeInPostOrderCreatingFoldersUnderTrash($tree[$index]['subNodes'][$j], $imap_stream, $tree, $topFolderName, $uid_support);
     } else {
         sqimap_mailbox_create($imap_stream, $trash_folder . $delimiter . $subFolderName, '');
         $mbx_response = sqimap_mailbox_select($imap_stream, $tree[$index]['value']);
         $messageCount = $mbx_response['EXISTS'];
         if ($messageCount > 0) {
-            sqimap_msgs_list_copy($imap_stream, '1:*', $trash_folder . $delimiter . $subFolderName);
+            sqimap_msgs_list_copy($imap_stream, '1:*', $trash_folder . $delimiter . $subFolderName, $uid_support);
         }
         // after copy close the mailbox to get in unselected state
         sqimap_run_command($imap_stream,'CLOSE',false,$response,$message);

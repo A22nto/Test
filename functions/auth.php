@@ -124,7 +124,7 @@ function is_logged_in() {
             logout_error( _("Your session has expired, but will be resumed after logging in again.") );
         else if ($message == 2)
             logout_error( _("The current page request appears to have originated from an unrecognized source.") );
-        exit;
+        trigger_error('Logout error',E_USER_NOTICE);
     }
 }
 

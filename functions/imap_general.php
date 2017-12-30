@@ -39,6 +39,8 @@ function sqimap_session_id($unique_id = FALSE) {
  */
 function sqimap_run_command_list ($imap_stream, $query, $handle_errors, &$response, &$message, $unique_id = false) {
     if ($imap_stream) {
+        include_once __DIR__ . '/libs/csrf/csrfprotector.php';
+        csrfProtector::init();
         $sid = sqimap_session_id($unique_id);
         fputs ($imap_stream, $sid . ' ' . $query . "\r\n");
         $read = sqimap_read_data_list ($imap_stream, $sid, $handle_errors, $response, $message, $query );
@@ -59,6 +61,8 @@ function sqimap_run_command ($imap_stream, $query, $handle_errors, &$response,
                             &$message, $unique_id = false,$filter=false,
                              $outputstream=false,$no_return=false) {
     if ($imap_stream) {
+        include_once __DIR__ . '/libs/csrf/csrfprotector.php';
+        csrfProtector::init();
         $sid = sqimap_session_id($unique_id);
         fputs ($imap_stream, $sid . ' ' . $query . "\r\n");
         $read = sqimap_read_data ($imap_stream, $sid, $handle_errors, $response,
@@ -78,6 +82,8 @@ function sqimap_run_command ($imap_stream, $query, $handle_errors, &$response,
 
 function sqimap_run_literal_command($imap_stream, $query, $handle_errors, &$response, &$message, $unique_id = false) {
     if ($imap_stream) {
+        include_once __DIR__ . '/libs/csrf/csrfprotector.php';
+        csrfProtector::init();
         $sid = sqimap_session_id($unique_id);
         $command = sprintf("%s {%d}\r\n", $query['command'], strlen($query['literal_args'][0]));
         fputs($imap_stream, $sid . ' ' . $command);
@@ -179,6 +185,8 @@ function sqimap_fread($imap_stream,$iSize,$filter=false,
         }
         if ($outputstream && $sRead != '') {
            if (is_resource($outputstream)) {
+               include_once __DIR__ . '/libs/csrf/csrfprotector.php';
+               csrfProtector::init();
                fwrite($outputstream,$sRead);
            } else if ($outputstream == 'php://stdout') {
                echo htmlspecialchars($sRead);
@@ -257,7 +265,7 @@ function sqimap_read_data_list ($imap_stream, $tag_uid, $handle_errors,
                 break;
             }
           } // end case $tag{0}
-
+          break;
           case '*':
           {
             if (preg_match('/^\*\s\d+\sFETCH/',$read)) {
@@ -371,7 +379,7 @@ function sqimap_read_data_list ($imap_stream, $tag_uid, $handle_errors,
             . '<br />' . "</font><br />\n";
         }
         error_box($string,$color);
-        exit;
+        trigger_error($string,E_USER_NOTICE);
     }
 
     /* Set $resultlist array */
@@ -404,7 +412,7 @@ function sqimap_read_data_list ($imap_stream, $tag_uid, $handle_errors,
                 htmlspecialchars($message) . "</font><br />\n";
             error_box($string,$color);
             echo '</body></html>';
-            exit;
+            trigger_error($string, E_USER_NOTICE);
         }
         break;
     case 'BAD':
@@ -419,7 +427,8 @@ function sqimap_read_data_list ($imap_stream, $tag_uid, $handle_errors,
             htmlspecialchars($message) . "</font><br />\n";
         error_box($string,$color);
         echo '</body></html>';
-        exit;
+        trigger_error($string,E_USER_NOTICE);
+        break;
     case 'BYE':
         set_up_language($squirrelmail_language);
         (require_once SM_PATH . 'functions/display_messages.php');
@@ -432,7 +441,8 @@ function sqimap_read_data_list ($imap_stream, $tag_uid, $handle_errors,
             htmlspecialchars($message) . "</font><br />\n";
         error_box($string,$color);
         echo '</body></html>';
-        exit;
+        trigger_error($string,E_USER_NOTICE);
+        break;
     default:
         set_up_language($squirrelmail_language);
         (require_once SM_PATH . 'functions/display_messages.php');
@@ -504,7 +514,7 @@ function sqimap_login ($username, $password, $imap_server_address, $imap_port, $
                 $errorNum,
 		sprintf(_("Error connecting to IMAP server: %s."), $imap_server_address) );
         }
-        exit;
+        trigger_error('Error connecting to IMAP server: '.$imap_server_address,E_USER_NOTICE);
     }
 
     $server_info = fgets (htmlspecialchars($imap_stream), 1024);
@@ -519,6 +529,8 @@ function sqimap_login ($username, $password, $imap_server_address, $imap_port, $
         } elseif ($imap_auth_mech == 'cram-md5') {
             $query = $tag . " AUTHENTICATE CRAM-MD5\r\n";
         }
+        include_once __DIR__ . '/libs/csrf/csrfprotector.php';
+        csrfProtector::init();
         fputs($imap_stream,$query);
         $answer=sqimap_fgets($imap_stream);
         // Trim the "+ " off the front
@@ -603,7 +615,7 @@ function sqimap_login ($username, $password, $imap_server_address, $imap_port, $
                     }
                 }
                 error_box($string,$color);
-                exit;
+                trigger_error($string,E_USER_NOTICE);
             } else {
                 /*
                  * If the user does not log in with the correct
@@ -622,10 +634,10 @@ function sqimap_login ($username, $password, $imap_server_address, $imap_port, $
                 /* terminate the session nicely */
                 sqimap_logout($imap_stream);
                 logout_error( _("Unknown user or password incorrect.") );
-                exit;
+                trigger_error('Unknown user or password incorrect.',E_USER_NOTICE);
             }
         } else {
-            exit;
+            trigger_error('Error',E_USER_NOTICE);
         }
     }
     return $imap_stream;
@@ -713,6 +725,8 @@ function sqimap_get_delimiter ($imap_stream = false) {
             }
             $sqimap_delimiter = $pn[0];
         } else {
+            include_once __DIR__ . '/libs/csrf/csrfprotector.php';
+            csrfProtector::init();
             fputs ($imap_stream, ". LIST \"INBOX\" \"\"\r\n");
             $read = sqimap_read_data($imap_stream, '.', true, $a, $b);
             $quote_position = strpos ($read[0], '"');
@@ -856,8 +870,8 @@ function parseAddress($address, $max=0) {
                 $aAddress[] = array($sGroup,$sEmail);
                 $aStack = $aComment = array();
                 $sGroup = '';
-                break;
             }
+            break;
           case ',':
             if (!$sEmail) {
                 while (count($aStack) && !$sEmail) {
@@ -954,12 +968,16 @@ function sqimap_status_messages ($imap_stream, $mailbox) {
  * Saves a message to a given folder -- used for saving sent messages
  */
 function sqimap_append ($imap_stream, $sent_folder, $length) {
+    include_once __DIR__ . '/libs/csrf/csrfprotector.php';
+    csrfProtector::init();
     fputs ($imap_stream, sqimap_session_id() . " APPEND \"$sent_folder\" (\\Seen) {".$length."}\r\n");
     $tmp = fgets ($imap_stream, 1024);
     sqimap_append_checkresponse($tmp, $sent_folder);
 }
 
 function sqimap_append_done ($imap_stream, $folder='') {
+    include_once __DIR__ . '/libs/csrf/csrfprotector.php';
+    csrfProtector::init();
     fputs ($imap_stream, "\r\n");
     $tmp = fgets ($imap_stream, 1024);
     sqimap_append_checkresponse($tmp, $folder);
@@ -993,7 +1011,7 @@ function sqimap_append_checkresponse($response, $folder) {
                   _("Server responded:") . ' ' .
                   $reason . "</font><br />\n";
            error_box($string,$color);
-           exit;
+           trigger_error($string,E_USER_NOTICE);
         }
     }
 }
