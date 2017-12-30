@@ -73,10 +73,6 @@ function sqimap_msgs_list_move($imap_stream, $id, $mailbox, $handle_errors = '')
  *
  */
 
-class VarHelper {
-    public static $move_to_trash, $trash_folder, $uid_support;
-}
-
 VarHelper::$move_to_trash = $GLOBALS['move_to_trash'];
 VarHelper::$trash_folder = $GLOBALS['trash_folder'];
 VarHelper::$uid_support = $GLOBALS['uid_support'];
