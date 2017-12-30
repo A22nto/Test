@@ -72,8 +72,19 @@ function sqimap_msgs_list_move($imap_stream, $id, $mailbox, $handle_errors = '')
  * @param mixed  $id          A string or array of messages to delete
  *
  */
+
+class VarHelper {
+    public static $move_to_trash, $trash_folder, $uid_support;
+}
+
+VarHelper::$move_to_trash = $GLOBALS['move_to_trash'];
+VarHelper::$trash_folder = $GLOBALS['trash_folder'];
+VarHelper::$uid_support = $GLOBALS['uid_support'];
+
 function sqimap_msgs_list_delete($imap_stream, $mailbox, $id) {
-    global $move_to_trash, $trash_folder, $uid_support;
+    $move_to_trash = VarHelper::$move_to_trash;
+    $trash_folder = VarHelper::$trash_folder;
+    $uid_support = VarHelper::$uid_support;
     $msgs_id = sqimap_message_list_squisher($id);
     if (($move_to_trash == true) && (sqimap_mailbox_exists($imap_stream, $trash_folder) && ($mailbox != $trash_folder))) {
         /**
