@@ -49,7 +49,7 @@ function addressbook_init($showerr = true, $onlylocal = false) {
     $username = VarHelper::$username;
     $color = VarHelper::$color;
     $ldap_server = VarHelper::$ldap_server;
-    $address_book_global_filename = VarHelper::$address_book_global_filename;
+    
     $addrbook_dsn = VarHelper::$addrbook_dsn;
     $addrbook_table = VarHelper::$addrbook_table;
     $abook_global_file = VarHelper::$abook_global_file;

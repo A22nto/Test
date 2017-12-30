@@ -163,7 +163,7 @@ VarHelper::$imap_server_type = $GLOBALS['imap_server_type'];
 
 function sqimap_get_sort_order($imap_stream, $sort, $mbxresponse) {
     $default_charset = VarHelper::$default_charset;
-    $thread_sort_messages = VarHelper::$thread_sort_messages;
+    
     $internal_date_sort = VarHelper::$internal_date_sort;
     $server_sort_array = VarHelper::$server_sort_array;
     $sent_folder = VarHelper::$sent_folder;
@@ -782,7 +782,7 @@ function sqimap_get_small_header_list($imap_stream, $msg_list, $show_num=false) 
 $color = VarHelper::$color;
 $data_dir = VarHelper::$data_dir;
 $username = VarHelper::$username;
-$imap_server_type = VarHelper::$imap_server_type;
+
 $uid_support = VarHelper::$uid_support;
 $allow_server_sort = VarHelper::$allow_server_sort;
     /* Get the small headers for each message in $msg_list */
@@ -1240,8 +1240,7 @@ function sqimap_messages_delete($imap_stream, $start, $end, $mailbox) {
     
     $move_to_trash = VarHelper::$move_to_trash;
 $trash_folder = VarHelper::$trash_folder;
-$auto_expunge = VarHelper::$auto_expunge;
-$uid_support = VarHelper::$uid_support;
+
     
 
     if (($move_to_trash == true) && (sqimap_mailbox_exists($imap_stream, $trash_folder) && ($mailbox != $trash_folder))) {

@@ -182,7 +182,7 @@ function attachment_common_link_image(&$Args) {
     if (!empty($squirrelmail_attachments_finished_handling[$Args[7]])) return;
     $squirrelmail_attachments_finished_handling[$Args[7]] = TRUE;
 
-    $attachment_common_show_images = VarHelper::$attachment_common_show_images;
+  
 $attachment_common_show_images_list = VarHelper::$attachment_common_show_images_list;
 
     sqgetGlobalVar('QUERY_STRING', $QUERY_STRING, SQ_SERVER);

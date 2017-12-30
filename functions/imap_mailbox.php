@@ -666,20 +666,18 @@ VarHelper::$save_as_draft = $GLOBALS['save_as_draft'];
 VarHelper::$noselect_fix_enable = $GLOBALS['noselect_fix_enable'];
 
 function sqimap_mailbox_list($imap_stream, $force = false) {
-    $default_folder_prefix = VarHelper::$default_folder_prefix;
     $default_sub_of_inbox = VarHelper::$default_sub_of_inbox;
 
     if (!sqgetGlobalVar('boxesnew', $boxesnew, SQ_SESSION) || $force) {
-        $data_dir = VarHelper::$data_dir;
-        $username = VarHelper::$username;
+        
+        
         $list_special_folders_first = VarHelper::$list_special_folders_first;
         $folder_prefix = VarHelper::$folder_prefix;
-        $trash_folder = VarHelper::$trash_folder;
-        $sent_folder = VarHelper::$sent_folder;
-        $draft_folder = VarHelper::$draft_folder;
-        $move_to_trash = VarHelper::$move_to_trash;
-        $move_to_sent = VarHelper::$move_to_sent;
-        $save_as_draft = VarHelper::$save_as_draft;
+        
+        
+        
+        
+        
         $delimiter = VarHelper::$delimiter;
         $noselect_fix_enable = VarHelper::$noselect_fix_enable;
         $inbox_in_list = false;
@@ -849,7 +847,6 @@ function sqimap_mailbox_list($imap_stream, $force = false) {
  *  Returns a list of all folders, subscribed or not
  */
 function sqimap_mailbox_list_all($imap_stream) {
-    $list_special_folders_first = VarHelper::$list_special_folders_first;
     $folder_prefix = VarHelper::$folder_prefix;
     $delimiter = VarHelper::$delimiter;
 
