@@ -19,7 +19,9 @@
  * @package squirrelmail
  */
 
+if(isset($GLOBALS)){
 VarHelper::$glb = &$GLOBALS;
+}
         
 class Deliver_SMTP extends Deliver {
 
@@ -42,10 +44,9 @@ class Deliver_SMTP extends Deliver {
         $pop_host = $this->pop_host;
         echo $length;
         
-        $tst = &VarHelper::$glb;
-        
-        $use_smtp_tls = &$tst['use_smtp_tls'];
-        $smtp_auth_mech = &$tst['smtp_auth_mech'];
+        $glb = &VarHelper::$glb;
+        $use_smtp_tls = &$glb['use_smtp_tls'];
+        $smtp_auth_mech = &$glb['smtp_auth_mech'];
     
 
         if ($authpop) {

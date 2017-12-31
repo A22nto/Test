@@ -16,8 +16,14 @@
 /**
  * Check the preferences into the session cache.
  */
+if(isset($GLOBALS)){
+VarHelper::$glb = &$GLOBALS;
+}
 function cachePrefValues($data_dir, $username) {
-    global $prefs_are_cached, $prefs_cache;
+    
+$glb = &VarHelper::$glb;
+$prefs_are_cached = &$glb['prefs_are_cached'];
+$prefs_cache = &$glb['prefs_cache'];
 
     sqgetGlobalVar('prefs_are_cached', $prefs_are_cached, SQ_SESSION );
     if ( isset($prefs_are_cached) && $prefs_are_cached) {
@@ -88,7 +94,7 @@ function cachePrefValues($data_dir, $username) {
  * Return the value for the preference given by $string.
  */
 function getPref($data_dir, $username, $string, $default = '') {
-    global $prefs_cache;
+    $prefs_cache = &$glb['prefs_cache'];
 
     $result = do_hook_function('get_pref_override',array($username, $string));
 //FIXME: testing below for !$result means that a plugin cannot fetch its own pref value of 0, '0', '', FALSE, or anything else that evaluates to boolean FALSE.
@@ -113,7 +119,7 @@ function getPref($data_dir, $username, $string, $default = '') {
  * Save the preferences for this user.
  */
 function savePrefValues($data_dir, $username) {
-    global $prefs_cache;
+    $prefs_cache = &$glb['prefs_cache'];
 
     $filename = getHashedFile($username, $data_dir, "$username.pref");
 
@@ -149,7 +155,7 @@ function savePrefValues($data_dir, $username) {
  * Remove a preference for the current user.
  */
 function removePref($data_dir, $username, $string) {
-    global $prefs_cache;
+    $prefs_cache = &$glb['prefs_cache'];
 
     cachePrefValues($data_dir, $username);
 
@@ -164,7 +170,7 @@ function removePref($data_dir, $username, $string) {
  * Set a there preference $string to $value.
  */
 function setPref($data_dir, $username, $string, $value) {
-    global $prefs_cache;
+    $prefs_cache = &$glb['prefs_cache'];
 
     cachePrefValues($data_dir, $username);
     if (isset($prefs_cache[$string]) && ($prefs_cache[$string] == $value)) {

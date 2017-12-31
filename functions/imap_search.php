@@ -24,23 +24,33 @@
 $count_all='';
 $search_position = '';
 
+if(isset($GLOBALS)){
+VarHelper::$glb = &$GLOBALS;
+}
+
 function set_count_all($value){
-    global $count_all;
+    
+$glb = &VarHelper::$glb;
+$count_all = &$glb['count_all'];
     $count_all=$value;
 }
 
 function get_count_all(){
-    global $count_all;
+    
+$glb = &VarHelper::$glb;
+$count_all = &$glb['count_all'];
     return $count_all;
 }
 
 function set_search_position($value){
-    global $search_position;
+    $glb = &VarHelper::$glb;
+$search_position = &$glb['search_position'];
     $search_position=$value;
 }
 
 function get_search_position(){
-    global $search_position;
+    $glb = &VarHelper::$glb;
+$search_position = &$glb['search_position'];
     return $search_position;
 }
 
@@ -51,9 +61,15 @@ function sqimap_search($imapConnection, $search_where, $search_what, $mailbox, $
     echo $color;
     echo $search_all;
     echo $count_all;
-    global $message_highlight_list, $squirrelmail_language, $languages,
-           $index_order, $pos, $allow_charset_search, $uid_support,
-	   $imap_server_type;
+    $glb = &VarHelper::$glb;
+$message_highlight_list = &$glb['message_highlight_list'];
+$squirrelmail_language = &$glb['squirrelmail_language'];
+$languages = &$glb['languages'];
+$index_order = &$glb['index_order'];
+$pos = &$glb['pos'];
+$allow_charset_search = &$glb['allow_charset_search'];
+$uid_support = &$glb['uid_support'];
+$imap_server_type = &$glb['imap_server_type'];
 
     $pos = $search_position;
 
@@ -136,7 +152,8 @@ function sqimap_search($imapConnection, $search_where, $search_what, $mailbox, $
     }
 
 
-    global $sent_folder;
+    $glb = &VarHelper::$glb;
+$sent_folder = &$glb['sent_folder'];
 
     $cnt = count($messagelist);
     for ($q = 0; $q < $cnt; $q++) {

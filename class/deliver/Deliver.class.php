@@ -26,6 +26,11 @@
  * @author  Marc Groot Koerkamp
  * @package squirrelmail
  */
+if(isset($GLOBALS)){
+VarHelper::$glb = &$GLOBALS;
+}
+
+
 class Deliver {
 
     /**
@@ -72,6 +77,8 @@ class Deliver {
      *                 written) to the output stream.
      *
      */
+    
+    
     function mail(&$message, $stream=false, $reply_id=0, $reply_ent_id=0, 
                   $imap_stream=NULL, $extra=NULL) {
 
@@ -89,8 +96,13 @@ class Deliver {
         // calculate reply header if needed
         //
         if ($reply_id) {
-            global $imapConnection, $username, $key, $imapServerAddress, 
-                   $imapPort, $mailbox;
+            $glb = &VarHelper::$glb;
+$imapConnection = &$glb['imapConnection'];
+$username = &$glb['username'];
+$key = &$glb['key'];
+$imapServerAddress = &$glb['imapServerAddress'];
+$imapPort = &$glb['imapPort'];
+$mailbox = &$glb['mailbox'];
 
             // try our best to use an existing IMAP handle
             //
@@ -278,7 +290,9 @@ class Deliver {
                 }
                 $last = $body_part;
             } elseif ($message->att_local_name) {
-                global $username, $attachment_dir;
+                $glb = &VarHelper::$glb;
+$username = &$glb['username'];
+$attachment_dir = &$glb['attachment_dir'];
                 $hashed_attachment_dir = getHashedDir($username, $attachment_dir);
                 $filename = $message->att_local_name;
 
@@ -336,7 +350,9 @@ class Deliver {
                     $this->writeToStream($stream, $body_part);
                 }
             } elseif ($message->att_local_name) {
-                global $username, $attachment_dir;
+                $glb = &VarHelper::$glb;
+$username = &$glb['username'];
+$attachment_dir = &$glb['attachment_dir'];
                 $hashed_attachment_dir = getHashedDir($username, $attachment_dir);
                 $filename = $message->att_local_name;
                 $file = fopen ($hashed_attachment_dir . '/' . $filename, 'rb');
@@ -511,7 +527,9 @@ class Deliver {
             // (see RFC 2822/2.1.1)
             //
             if (!empty($message->att_local_name)) { // is this redundant? I have no idea
-                global $username, $attachment_dir;
+                $glb = &VarHelper::$glb;
+$username = &$glb['username'];
+$attachment_dir = &$glb['attachment_dir'];
                 $hashed_attachment_dir = getHashedDir($username, $attachment_dir);
                 $filename = $hashed_attachment_dir . '/' . $message->att_local_name;
 
@@ -574,7 +592,13 @@ class Deliver {
      * @return string $header
      */
     function prepareRFC822_Header(&$rfc822_header, $reply_rfc822_header, &$raw_length) {
-        global $domain, $version, $username, $encode_header_key, $edit_identity, $hide_auth_header;
+        $glb = &VarHelper::$glb;
+$domain = &$glb['domain'];
+$version = &$glb['version'];
+$username = &$glb['username'];
+$encode_header_key = &$glb['encode_header_key'];
+$edit_identity = &$glb['edit_identity'];
+$hide_auth_header = &$glb['hide_auth_header'];
 
         if (! isset($hide_auth_header)) $hide_auth_header=false;
 
@@ -1092,7 +1116,9 @@ class Deliver {
      * @return string $result with timezone and offset
      */
     function timezone () {
-        global $invert_time, $show_timezone_name;
+        $glb = &VarHelper::$glb;
+$invert_time = &$glb['invert_time'];
+$show_timezone_name = &$glb['show_timezone_name'];
 
         $diff_second = date('Z');
         if ($invert_time) {
