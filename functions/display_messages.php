@@ -17,9 +17,14 @@
  */
 (require_once SM_PATH . 'functions/plugin.php');
 
+if(isset($GLOBALS)){
+VarHelper::$glb = &$GLOBALS;
+}
+
 function error_message($message, $mailbox, $sort, $startMessage, $color) {
 
-    global $default_folder_prefix;
+    $glb = &VarHelper::$glb;
+$default_folder_prefix = &$glb['default_folder_prefix'];
 
     $urlMailbox = urlencode($mailbox);
     $string = '<tr><td align="center">' . $message . '</td></tr>'.
@@ -42,9 +47,18 @@ function plain_error_message($message, $color) {
 }
 
 function logout_error( $errString, $errTitle = '' ) {
-    global $frame_top, $org_logo, $org_name, $org_logo_width, $org_logo_height,
-           $hide_sm_attributions, $version, $squirrelmail_language, 
-           $color, $theme, $theme_default;
+    $glb = &VarHelper::$glb;
+$frame_top = &$glb['frame_top'];
+$org_logo = &$glb['org_logo'];
+$org_name = &$glb['org_name'];
+$org_logo_width = &$glb['org_logo_width'];
+$org_logo_height = &$glb['org_logo_height'];
+$hide_sm_attributions = &$glb['hide_sm_attributions'];
+$version = &$glb['version'];
+$squirrelmail_language = &$glb['squirrelmail_language'];
+$color = &$glb['color'];
+$theme = &$glb['theme'];
+$theme_default = &$glb['theme_default'];
 
     (include_once SM_PATH . 'functions/page_header.php' );
 
@@ -116,7 +130,9 @@ function logout_error( $errString, $errTitle = '' ) {
 }
 
 function error_box($string, $color) {
-    global $pageheader_sent, $org_title;
+    $glb = &VarHelper::$glb;
+$pageheader_sent = &$glb['pageheader_sent'];
+$org_title = &$glb['org_title'];
 
     if ( !isset( $color ) ) {
         $color = array();
@@ -165,7 +181,9 @@ function error_box($string, $color) {
  * @since 1.5.1 and 1.4.5
  */
 function error_option_save($message) {
-    global $optpage_save_error;
+   
+$glb = &VarHelper::$glb;
+$optpage_save_error = &$glb['optpage_save_error'];
 
     if (! is_array($optpage_save_error) )
         $optpage_save_error=array();

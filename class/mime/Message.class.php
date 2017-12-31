@@ -24,6 +24,11 @@
  * @subpackage mime
  * @since 1.3.0
  */
+
+if(isset($GLOBALS)){
+VarHelper::$glb = &$GLOBALS;
+}
+
 class Message {
     /**
      * rfc822header object
@@ -1135,7 +1140,9 @@ class Message {
      */
     function purgeAttachments() {
         if ($this->att_local_name) {
-            global $username, $attachment_dir;
+            $glb = &VarHelper::$glb;
+$username = &$glb['username'];
+$attachment_dir = &$glb['attachment_dir'];
             $hashed_attachment_dir = getHashedDir($username, $attachment_dir);
             if ( file_exists($hashed_attachment_dir . '/' . $this->att_local_name) ) {
                 unlink($hashed_attachment_dir . '/' . $this->att_local_name);

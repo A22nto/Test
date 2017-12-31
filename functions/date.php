@@ -25,6 +25,9 @@
  * @param string tzc the timezone correction
  * @return int the corrected timestamp
  */
+if(isset($GLOBALS)){
+VarHelper::$glb = &$GLOBALS;
+}
 function getGMTSeconds($stamp, $tzc) {
     /* date couldn't be parsed */
     if ($stamp == -1) {
@@ -308,7 +311,9 @@ function date_intl( $date_format, $stamp ) {
  */
 function getLongDateString( $stamp, $fallback = '' ) {
 
-    global $hour_format;
+    
+$glb = &VarHelper::$glb;
+$hour_format = &$glb['hour_format'];
 
     if ($stamp == -1) {
         return $fallback;
@@ -336,7 +341,10 @@ function getLongDateString( $stamp, $fallback = '' ) {
  */
 function getDateString( $stamp ) {
 
-    global $invert_time, $hour_format, $show_full_date;
+    $glb = &VarHelper::$glb;
+$invert_time = &$glb['invert_time'];
+$hour_format = &$glb['hour_format'];
+$show_full_date = &$glb['show_full_date'];
 
     if ( $stamp == -1 ) {
        return '';

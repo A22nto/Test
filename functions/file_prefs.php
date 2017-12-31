@@ -94,6 +94,7 @@ $prefs_cache = &$glb['prefs_cache'];
  * Return the value for the preference given by $string.
  */
 function getPref($data_dir, $username, $string, $default = '') {
+    $glb = &VarHelper::$glb;
     $prefs_cache = &$glb['prefs_cache'];
 
     $result = do_hook_function('get_pref_override',array($username, $string));
@@ -119,6 +120,7 @@ function getPref($data_dir, $username, $string, $default = '') {
  * Save the preferences for this user.
  */
 function savePrefValues($data_dir, $username) {
+    $glb = &VarHelper::$glb;
     $prefs_cache = &$glb['prefs_cache'];
 
     $filename = getHashedFile($username, $data_dir, "$username.pref");
@@ -155,6 +157,7 @@ function savePrefValues($data_dir, $username) {
  * Remove a preference for the current user.
  */
 function removePref($data_dir, $username, $string) {
+    $glb = &VarHelper::$glb;
     $prefs_cache = &$glb['prefs_cache'];
 
     cachePrefValues($data_dir, $username);
@@ -170,6 +173,7 @@ function removePref($data_dir, $username, $string) {
  * Set a there preference $string to $value.
  */
 function setPref($data_dir, $username, $string, $value) {
+    $glb = &VarHelper::$glb;
     $prefs_cache = &$glb['prefs_cache'];
 
     cachePrefValues($data_dir, $username);
