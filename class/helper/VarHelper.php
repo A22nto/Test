@@ -132,4 +132,9 @@ public static
 $sq_ignore_http_x_forwarded_headers,
 $sq_https_port;
 
+
+public static $glb;
+
+
+
 }

@@ -19,7 +19,7 @@
  * @package squirrelmail
  */
 
-
+VarHelper::$glb = &$GLOBALS;
         
 class Deliver_SMTP extends Deliver {
 
@@ -34,13 +34,15 @@ class Deliver_SMTP extends Deliver {
     public $authpop=false;
     public $pop_host='';
     
+    
+    
     function initStream($message, $domain, $length=0, $host='', $port='', $user='') {
         $pass = $this->pass;
         $authpop= $this->authpop;
         $pop_host = $this->pop_host;
         echo $length;
         
-        $tst = &$GLOBALS;
+        $tst = &VarHelper::$glb;
         
         $use_smtp_tls = &$tst['use_smtp_tls'];
         $smtp_auth_mech = &$tst['smtp_auth_mech'];
