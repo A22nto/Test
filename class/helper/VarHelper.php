@@ -67,5 +67,69 @@ $attachment_common_show_images_list;
     
     public static 
 $FileExtensionToMimeType;
+    
+    public static 
+$prefs_are_cached,
+$prefs_cache;
+    
+    public static 
+$prefs_dsn,
+$prefs_table,
+$prefs_user_field,
+$prefs_key_field,
+$prefs_val_field;
+    
+    public static 
+$use_gettext;
+    
+    public static 
+$languages,
+$sm_notAlias;
+    
+public static 
+$aggressive_decoding;
+
+public static 
+$squirrelmail_default_language;
+
+public static 
+$filter,
+$outputstream,
+        $noreturn;
+
+public static 
+$onetimepad,
+$use_imap_tls,
+$imap_auth_mech;
+
+public static 
+$sqimap_capabilities;
+
+public static 
+$sqimap_delimiter,
+$optional_delimiter;
+
+public static 
+$SQ_PHP_VERSION;
+
+public static 
+$SQM_INTERNAL_VERSION;
+
+public static 
+$base_uri;
+
+public static 
+$bHttpOnly,
+        $bReplace;
+
+public static 
+$is_secure_connection;
+
+public static 
+$only_secure_cookies;
+
+public static 
+$sq_ignore_http_x_forwarded_headers,
+$sq_https_port;
 
 }

@@ -882,7 +882,7 @@ class Deliver {
 
             // look for a token as close to the end of the soft wrap limit as possible
             //
-            foreach ($whitespace as $token) {
+            a:foreach ($whitespace as $token) {
 
                 // note that this if statement also fails when $pos === 0,
                 // which is intended, since blank lines are not allowed
@@ -893,7 +893,7 @@ class Deliver {
 
                     // make sure proposed fold doesn't create a blank line
                     //
-                    if (!trim($new_fold)) continue;
+                    if (!trim($new_fold)) goto a;
 
                     // with whitespace breaks, we fold BEFORE the token
                     //
@@ -923,14 +923,14 @@ class Deliver {
                 // is possible we don't want the first one we find
                 //
                 $pos = $soft_wrap - 1; // -1 is corrected by +1 on next line
-                while ($pos = strpos($hard_wrapped_line, $token, $pos + 1))
+                b:while ($pos = strpos($hard_wrapped_line, $token, $pos + 1))
                 {
 
                     $new_fold = substr($header, 0, $pos);
 
                     // make sure proposed fold doesn't create a blank line
                     //
-                    if (!trim($new_fold)) continue;
+                    if (!trim($new_fold)) goto b;
 
                     // with whitespace breaks, we fold BEFORE the token
                     //
@@ -956,7 +956,7 @@ class Deliver {
             // otherwise, we can't quit yet - look for a "hard" token
             // as close to the end of the hard wrap limit as possible
             //
-            foreach ($hard_break_tokens as $token) {
+            c:foreach ($hard_break_tokens as $token) {
 
                 // note that this if statement also fails when $pos === 0,
                 // which is intended, since blank lines are not allowed
@@ -1008,7 +1008,7 @@ class Deliver {
                     // not at the beginning of the line, as blank
                     // lines are not allowed
                     //
-                    if ($pos === 0) continue;
+                    if ($pos === 0) goto c;
 
                     // we are dealing with a simple token break...
                     //

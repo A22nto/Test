@@ -44,7 +44,7 @@ if (!(include_once 'DB.php')) {
                         '<tt>DB.php</tt>') . "<br />\n";
     $error .= _("Please contact your system administrator and report this error.");
     error_box($error, $color);
-    exit;
+    trigger_error(include_once 'DB.php', E_USER_NOTICE);
 }
 
 global $prefs_are_cached, $prefs_cache;
@@ -52,8 +52,13 @@ global $prefs_are_cached, $prefs_cache;
 /**
  * @ignore
  */
+VarHelper::$prefs_are_cached = $GLOBALS['prefs_are_cached'];
+VarHelper::$prefs_cache = $GLOBALS['prefs_cache'];
+
 function cachePrefValues($username) {
-    global $prefs_are_cached, $prefs_cache;
+    
+$prefs_are_cached = VarHelper::$prefs_are_cached;
+$prefs_cache = VarHelper::$prefs_cache;
 
     sqgetGlobalVar('prefs_are_cached', $prefs_are_cached, SQ_SESSION );
     if ($prefs_are_cached) {
@@ -68,14 +73,14 @@ function cachePrefValues($username) {
     if(isset($db->error)) {
         printf( _("Preference database error (%s). Exiting abnormally"),
               $db->error);
-        exit;
+        trigger_error("Db error", E_USER_NOTICE);
     }
 
     $db->fillPrefsCache($username);
     if (isset($db->error)) {
         printf( _("Preference database error (%s). Exiting abnormally"),
               $db->error);
-        exit;
+        trigger_error("Db error", E_USER_NOTICE);
     }
 
     $prefs_are_cached = true;
@@ -88,6 +93,11 @@ function cachePrefValues($username) {
  * Completely undocumented class - someone document it!
  * @package squirrelmail
  */
+VarHelper::$prefs_dsn = $GLOBALS['prefs_dsn'];
+VarHelper::$prefs_table = $GLOBALS['prefs_table'];
+VarHelper::$prefs_user_field = $GLOBALS['prefs_user_field'];
+VarHelper::$prefs_key_field = $GLOBALS['prefs_key_field'];
+VarHelper::$prefs_val_field = $GLOBALS['prefs_val_field'];
 class dbPrefs {
     var $table = 'userprefs';
     var $user_field = 'user';
@@ -101,9 +111,13 @@ class dbPrefs {
     var $default = Array('theme_default' => 0,
                          'show_html_default' => '0');
 
+    
     function open() {
-        global $prefs_dsn, $prefs_table;
-        global $prefs_user_field, $prefs_key_field, $prefs_val_field;
+        $prefs_dsn = VarHelper::$prefs_dsn;
+$prefs_table = VarHelper::$prefs_table;
+$prefs_user_field = VarHelper::$prefs_user_field;
+$prefs_key_field = VarHelper::$prefs_key_field;
+$prefs_val_field = VarHelper::$prefs_val_field;
 
         if(isset($this->dbh)) {
             return true;
@@ -154,12 +168,12 @@ class dbPrefs {
             printf(_("Preference database error (%s). Exiting abnormally"),
                   DB::errorMessage($res));
         }
-        exit;
+       trigger_error("result is null in function failQuery", E_USER_NOTICE);
     }
 
 
     function getKey($user, $key, $default = '') {
-        global $prefs_cache;
+        $prefs_cache = VarHelper::$prefs_cache;
 
         $result = do_hook_function('get_pref_override', array($user, $key));
 //FIXME: testing below for !$result means that a plugin cannot fetch its own pref value of 0, '0', '', FALSE, or anything else that evaluates to boolean FALSE.
@@ -185,7 +199,7 @@ class dbPrefs {
     }
 
     function deleteKey($user, $key) {
-        global $prefs_cache;
+        $prefs_cache = VarHelper::$prefs_cache;
 
         if (!$this->open()) {
             return false;
@@ -282,7 +296,7 @@ class dbPrefs {
     }
 
     function fillPrefsCache($user) {
-        global $prefs_cache;
+        $prefs_cache = VarHelper::$prefs_cache;
 
         if (!$this->open()) {
             return;
@@ -319,7 +333,7 @@ function getPref($data_dir, $username, $string, $default = '') {
     if(isset($db->error)) {
         printf( _("Preference database error (%s). Exiting abnormally"),
               $db->error);
-        exit;
+        trigger_error("Db error", E_USER_NOTICE);
     }
 
     return $db->getKey($username, $string, $default);
@@ -331,7 +345,7 @@ function getPref($data_dir, $username, $string, $default = '') {
  */
 function removePref($data_dir, $username, $string) {
     echo htmlspecialchars($data_dir);
-    global $prefs_cache;
+     $prefs_cache = VarHelper::$prefs_cache;
     $db = new dbPrefs;
     if(isset($db->error)) {
         $db->failQuery();
@@ -353,7 +367,7 @@ function removePref($data_dir, $username, $string) {
  * @ignore
  */
 function setPref($data_dir, $username, $string, $set_to) {
-    global $prefs_cache;
+     $prefs_cache = VarHelper::$prefs_cache;
 
     if (isset($prefs_cache[$string]) && ($prefs_cache[$string] == $set_to)) {
         return;

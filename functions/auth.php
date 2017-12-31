@@ -332,6 +332,8 @@ function sqauth_save_password($pass) {
     $onetimepad = OneTimePadCreate(strlen($pass));
     sqsession_register($onetimepad,'onetimepad');
     $key = OneTimePadEncrypt($pass, $onetimepad);
+    set_bHttpOnly(true);
+    set_bReplace(false);
     sqsetcookie('key', $key, false, $base_uri);
     return $key;
 }

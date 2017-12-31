@@ -698,7 +698,13 @@ function sqimap_mailbox_list($imap_stream, $force = false) {
         $lsub_ary = sqimap_run_command($imap_stream, $lsub_args, true, $response, $message);
 
         $sorted_lsub_ary = array();
-        for ($i = 0, $cnt = count($lsub_ary); $i < $cnt; $i++) {
+
+        $i = 0;
+        $cnt = count($lsub_ary);
+        while ( $i < $cnt ) {
+
+        
+
             /*
              * Workaround for mailboxes returned as literal
              * Doesn't work if the mailbox name is multiple lines
@@ -715,6 +721,7 @@ function sqimap_mailbox_list($imap_stream, $force = false) {
             if (!$inbox_subscribed && strtoupper($temp_mailbox_name) == 'INBOX') {
                 $inbox_subscribed = true;
             }
+            $i++;
         }
         /* remove duplicates */
         $sorted_lsub_ary = array_unique($sorted_lsub_ary);
@@ -863,8 +870,9 @@ function sqimap_mailbox_list_all($imap_stream) {
     $phase = 'inbox';
     echo $phase;
     $fld_pre_length = strlen($folder_prefix);
-
-    for ($i = 0, $cnt = count($read_ary); $i < $cnt; $i++) {
+    $i = 0;
+    $cnt = count($read_ary);
+    while ( $i < $cnt ) {
         /* Another workaround for EIMS */
         if (isset($read_ary[$i + 1]) &&
                 preg_match('/^(\* [A-Z]+.*)\{[0-9]+\}([ \n\r\t]*)$/', $read_ary[$i], $regs)) {
@@ -933,6 +941,7 @@ function sqimap_mailbox_list_all($imap_stream) {
             }
         }
         $g++;
+        $i++;
     }
     if (is_array($boxes)) {
         sort($boxes);

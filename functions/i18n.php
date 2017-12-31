@@ -46,8 +46,9 @@ if (!defined('SM_PATH')) define('SM_PATH','../');
  *
  * @since 1.4.10 and 1.5.2
  */
+VarHelper::$use_gettext = $GLOBALS['use_gettext'];
 function sq_change_text_domain($domain_name, $directory='') {
-    global $use_gettext;
+    $use_gettext = VarHelper::$use_gettext;
     static $domains_already_seen = array();
 
     textdomain();
@@ -92,8 +93,11 @@ function sq_change_text_domain($domain_name, $directory='') {
  *                    directory)
  * @return string path to translation directory
  */
+VarHelper::$languages = $GLOBALS['languages'];
+VarHelper::$sm_notAlias = $GLOBALS['sm_notAlias'];
 function sq_bindtextdomain($domain,$dir='') {
-    global $languages, $sm_notAlias;
+    $languages = VarHelper::$languages;
+$sm_notAlias = VarHelper::$sm_notAlias;
 
     if (empty($dir)) $dir = SM_PATH . 'locale/';
 
@@ -176,8 +180,13 @@ function sq_setlocale($category,$locale) {
  *  html formating. Use with care. Available since 1.4.6 and 1.5.1
  * @return string decoded string
  */
+VarHelper::$squirrelmail_language = $GLOBALS['squirrelmail_language'];
+VarHelper::$default_charset = $GLOBALS['default_charset'];
+VarHelper::$aggressive_decoding = $GLOBALS['aggressive_decoding'];
 function charset_decode ($charset, $string, $force_decode=false, $save_html=false) {
-    global $languages, $squirrelmail_language, $default_charset;
+    $languages = VarHelper::$languages;
+$squirrelmail_language = VarHelper::$squirrelmail_language;
+$default_charset = VarHelper::$default_charset;
 
     if (isset($languages[$squirrelmail_language]['XTRA_CODE']) &&
         function_exists($languages[$squirrelmail_language]['XTRA_CODE'])) {
@@ -195,7 +204,7 @@ function charset_decode ($charset, $string, $force_decode=false, $save_html=fals
         return $string;
 
     /* controls cpu and memory intensive decoding cycles */
-    global $aggressive_decoding;
+    $aggressive_decoding = VarHelper::$aggressive_decoding;
     $aggressive_decoding = false;
 
     $decode=fixcharset($charset);
@@ -219,7 +228,7 @@ function charset_decode ($charset, $string, $force_decode=false, $save_html=fals
  * @return string
  */
 function charset_encode($string,$charset,$htmlencode=true) {
-    global $default_charset;
+    $default_charset = VarHelper::$default_charset;
 
     $encode=fixcharset($charset);
     $encodefile=SM_PATH . 'functions/encode/' . $encode . '.php';
@@ -328,11 +337,21 @@ function fixcharset($charset) {
  * @return int function execution error codes.
  *
  */
+VarHelper::$use_gettext = $GLOBALS['use_gettext'];
+VarHelper::$languages = $GLOBALS['languages'];
+VarHelper::$squirrelmail_language = $GLOBALS['squirrelmail_language'];
+VarHelper::$squirrelmail_default_language = $GLOBALS['squirrelmail_default_language'];
+VarHelper::$default_charset = $GLOBALS['default_charset'];
+VarHelper::$sm_notAlias = $GLOBALS['sm_notAlias'];
 function set_up_language($sm_language, $do_search = false, $default = false) {
 
     static $SetupAlready = 0;
-    global $use_gettext, $languages, $squirrelmail_language,
-           $squirrelmail_default_language, $default_charset, $sm_notAlias;
+    $use_gettext = VarHelper::$use_gettext;
+$languages = VarHelper::$languages;
+$squirrelmail_language = VarHelper::$squirrelmail_language;
+$squirrelmail_default_language = VarHelper::$squirrelmail_default_language;
+$default_charset = VarHelper::$default_charset;
+$sm_notAlias = VarHelper::$sm_notAlias;
 
     if ($SetupAlready) {
         return;
@@ -509,8 +528,17 @@ function set_up_language($sm_language, $do_search = false, $default = false) {
  * selection. This is "more right" (tm), than just stamping the
  * message blindly with the system-wide $default_charset.
  */
+VarHelper::$data_dir = $GLOBALS['data_dir'];
+VarHelper::$username = $GLOBALS['username'];
+VarHelper::$default_charset = $GLOBALS['default_charset'];
+VarHelper::$languages = $GLOBALS['languages'];
+VarHelper::$squirrelmail_language = $GLOBALS['squirrelmail_language'];
 function set_my_charset(){
-    global $data_dir, $username, $default_charset, $languages, $squirrelmail_language;
+    $data_dir = VarHelper::$data_dir;
+$username = VarHelper::$username;
+$default_charset = VarHelper::$default_charset;
+$languages = VarHelper::$languages;
+$squirrelmail_language = VarHelper::$squirrelmail_language;
 
     $my_language = getPref($data_dir, $username, 'language');
     if (!$my_language) {
@@ -538,8 +566,15 @@ function set_my_charset(){
  * @param string $input_charset Charset of text that needs to be converted
  * @return bool is it possible to convert to user's charset
  */
+VarHelper::$languages = $GLOBALS['languages'];
+VarHelper::$sm_notAlias = $GLOBALS['sm_notAlias'];
+VarHelper::$default_charset = $GLOBALS['default_charset'];
+VarHelper::$lossy_encoding = $GLOBALS['lossy_encoding'];
 function is_conversion_safe($input_charset) {
-    global $languages, $sm_notAlias, $default_charset, $lossy_encoding;
+    $languages = VarHelper::$languages;
+$sm_notAlias = VarHelper::$sm_notAlias;
+$default_charset = VarHelper::$default_charset;
+$lossy_encoding = VarHelper::$lossy_encoding;
 
     if (isset($lossy_encoding) && $lossy_encoding )
         return true;
@@ -764,17 +799,19 @@ function korean_charset_xtra() {
     $ret = func_get_arg(1);  /* default return value */
     if (func_get_arg(0) == 'downloadfilename') { /* action */
         $ret = str_replace("\x0D\x0A", '', $ret);  /* Hanmail's CR/LF Clear */
-        for ($i=0;$i<strlen($ret);$i++) {
+        $i=0;
+        h:while ($i<strlen($ret) ) {
             if ($ret[$i] >= "\xA1" && $ret[$i] <= "\xFE") {   /* 0xA1 - 0XFE are Valid */
                 $i++;
-                continue;
+                goto h;
             } else if (($ret[$i] >= 'a' && $ret[$i] <= 'z') || /* From Original ereg_replace in download.php */
                        ($ret[$i] >= 'A' && $ret[$i] <= 'Z') ||
                        ($ret[$i] == '.') || ($ret[$i] == '-')) {
-                continue;
+                goto h;
             } else {
                 $ret[$i] = '_';
             }
+            $i++;
         }
 
     }

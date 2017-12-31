@@ -519,17 +519,17 @@ function parseString($read,&$i) {
         $iPos = ++$i;
         while (true) {
             $iPos = strpos($read,'"',$iPos);
-            if (!$iPos) break;
-            if ($iPos && $read{$iPos -1} != '\\') {
+            
+            if (!$iPos||($iPos && $read{$iPos -1}) != '\\') {
                 $s = substr($read,$i,($iPos-$i));
                 $i = $iPos;
-                break;
+                goto i;
             }
             $iPos++;
             if ($iPos > strlen($read)) {
-                break;
+                goto i;
             }
-        }
+        }i:
     } else if ($char == '{') {
         $lit_cnt = '';
         ++$i;
@@ -663,75 +663,14 @@ function parseFetch(&$aResponse, $aMessageList = array()) {
                 break;
             case 'BODY.PEEK[HEADER.FIELDS':
             case 'BODY[HEADER.FIELDS':
-                $i = strpos($read,'{',$i); // header is always returned as literal because it contain \n characters
-                $header = parseString($read,$i);
-                if ($header === false) break 2;
-                /* First we replace all \r\n by \n, and unfold the header */
-                $hdr = trim(str_replace(array("\r\n", "\n\t", "\n "),array("\n", ' ', ' '), $header));
-                /* Now we can make a new header array with
-                   each element representing a headerline  */
-                $aHdr = explode("\n" , $hdr);
-                $aReceived = array();
-                print_r($aReceived);
-                foreach ($aHdr as $line) {
-                    $pos = strpos($line, ':');
-                    if ($pos > 0) {
-                        $field = strtolower(substr($line, 0, $pos));
-                        if (!strstr($field,' ')) { /* valid field */
-                            $value = trim(substr($line, $pos+1));
-                            switch($field) {
-                                case 'date':
-                                    $aMsg['date'] = trim(str_replace('  ', ' ', $value));
-                                    break;
-                                case 'x-priority': $aMsg['x-priority'] = ($value) ? (int) $value{0} : 3; break;
-                                case 'priority':
-                                case 'importance':
-                                    // duplicate code with Rfc822Header.cls:parsePriority()
-                                    if (!isset($aMsg['x-priority'])) {
-                                        $aPrio = preg_split('/\s/',trim($value));
-                                        $sPrio = strtolower(array_shift($aPrio));
-                                        if  (is_numeric($sPrio)) {
-                                            $iPrio = (int) $sPrio;
-                                        } elseif ( $sPrio == 'non-urgent' || $sPrio == 'low' ) {
-                                            $iPrio = 5;
-                                        } elseif ( $sPrio == 'urgent' || $sPrio == 'high' ) {
-                                            $iPrio = 1;
-                                        } else {
-                                            // default is normal priority
-                                            $iPrio = 3;
-                                        }
-                                        $aMsg['x-priority'] = $iPrio;
-                                    }
-                                    break;
-                                case 'content-type':
-                                    $type = $value;
-                                    if ($pos = strpos($type, ";")) {
-                                        $type = substr($type, 0, $pos);
-                                    }
-                                    $type = explode("/", $type);
-                                    if(!is_array($type) || count($type) < 2) {
-                                        $aMsg['content-type'] = array('text','plain');
-                                    } else {
-                                        $aMsg['content-type'] = array(strtolower($type[0]),strtolower($type[1]));
-                                    }
-                                    break;
-                                case 'received':
-                                    $aMsg['received'][] = $value;
-                                    break;
-                                default:
-                                    $aMsg[$field] = $value;
-                                    break;
-                            }
-                        }
-                    }
-                }
+                funzioneCaseBODY();
                 break;
             default:
                 ++$i;
                 break;
             }
         }
-        if (!empty($unique_id)) {
+        l:if (!empty($unique_id)) {
             $msgi = "$unique_id";
             $aMsg['UID'] = $unique_id;
        } else {
@@ -914,63 +853,14 @@ $allow_server_sort = VarHelper::$allow_server_sort;
                 break;
             case 'BODY.PEEK[HEADER.FIELDS':
             case 'BODY[HEADER.FIELDS':
-                $i = strpos($read,'{',$i);
-                $header = parseString($read,$i);
-                if ($header === false) break 2;
-                /* First we replace all \r\n by \n, and unfold the header */
-                $hdr = trim(str_replace(array("\r\n", "\n\t", "\n "),array("\n", ' ', ' '), $header));
-                /* Now we can make a new header array with */
-                /* each element representing a headerline  */
-                $hdr = explode("\n" , $hdr);
-                foreach ($hdr as $line) {
-                    $pos = strpos($line, ':');
-                    if ($pos > 0) {
-                        $field = strtolower(substr($line, 0, $pos));
-                        if (!strstr($field,' ')) { /* valid field */
-                            $value = trim(substr($line, $pos+1));
-                            switch($field)
-                            {
-                            case 'to': $to = $value; break;
-                            case 'cc': $cc = $value; break;
-                            case 'from': $from = $value; break;
-                            case 'date': $date = $value; break;
-                            case 'x-priority':
-                            case 'importance':
-                            case 'priority':
-                                $priority = parsePriority($value); break;
-                            case 'subject':
-                                $subject = $value;
-                                if ($subject == "") {
-                                    $subject = _("(no subject)");
-                                }
-                                break;
-                            case 'content-type':
-                                $type = strtolower($value);
-                                if ($pos = strpos($type, ";")) {
-                                    $type = substr($type, 0, $pos);
-                                }
-                                $type = explode("/", $type);
-                                if ( empty($type[0]) ) {
-                                    $type[0] = 'text';
-// I had this added, but not committed to CVS.... did it help fix something?
-//                                    $type[1] = 'plain';
-                                }
-                                if ( empty($type[1]) ) {
-                                    $type[1] = 'plain';
-                                }
-                                break;
-                            default: break;
-                            }
-                        }
-                    }
-                }
+                funzioneCaseBODY2();
                 break;
             default:
                 ++$i;
                 break;
             }
         }
-        if (isset($date) || isset($internal_date)) {
+        m:if (isset($date) || isset($internal_date)) {
             if (isset($internal_date)) {
                 $internal_date = str_replace('  ', ' ', $internal_date);
                 $tmpinternal_date  = explode(' ', trim($internal_date));
@@ -1307,3 +1197,129 @@ function sqimap_get_small_header($imap_stream, $id, $sent) {
     return $res[0];
 }
 
+function funzioneCaseBODY(){
+                $i = strpos($read,'{',$i); // header is always returned as literal because it contain \n characters
+                $header = parseString($read,$i);
+                if ($header === false) goto l;
+                /* First we replace all \r\n by \n, and unfold the header */
+                $hdr = trim(str_replace(array("\r\n", "\n\t", "\n "),array("\n", ' ', ' '), $header));
+                /* Now we can make a new header array with
+                   each element representing a headerline  */
+                $aHdr = explode("\n" , $hdr);
+                $aReceived = array();
+                print_r($aReceived);
+                foreach ($aHdr as $line) {
+                    $pos = strpos($line, ':');
+                    if ($pos > 0) {
+                        $field = strtolower(substr($line, 0, $pos));
+                        if (!strstr($field,' ')) { /* valid field */
+                            $value = trim(substr($line, $pos+1));
+                            switch($field) {
+                                case 'date':
+                                    $aMsg['date'] = trim(str_replace('  ', ' ', $value));
+                                    break;
+                                case 'x-priority': $aMsg['x-priority'] = ($value) ? (int) $value{0} : 3; break;
+                                case 'priority':
+                                case 'importance':
+                                    funzioneCaseImportance();
+                                    break;
+                                case 'content-type':
+                                    funzioneCaseContentType();
+                                    break;
+                                case 'received':
+                                    $aMsg['received'][] = $value;
+                                    break;
+                                default:
+                                    $aMsg[$field] = $value;
+                                    break;
+                            }
+                        }
+                    }
+                }
+}
+function funzioneCaseImportance(){
+                                    // duplicate code with Rfc822Header.cls:parsePriority()
+                                    if (!isset($aMsg['x-priority'])) {
+                                        $aPrio = preg_split('/\s/',trim($value));
+                                        $sPrio = strtolower(array_shift($aPrio));
+                                        if  (is_numeric($sPrio)) {
+                                            $iPrio = (int) $sPrio;
+                                        } elseif ( $sPrio == 'non-urgent' || $sPrio == 'low' ) {
+                                            $iPrio = 5;
+                                        } elseif ( $sPrio == 'urgent' || $sPrio == 'high' ) {
+                                            $iPrio = 1;
+                                        } else {
+                                            // default is normal priority
+                                            $iPrio = 3;
+                                        }
+                                        $aMsg['x-priority'] = $iPrio;
+                                    }
+}
+
+function funzioneCaseContentType(){
+                                    $type = $value;
+                                    if ($pos = strpos($type, ";")) {
+                                        $type = substr($type, 0, $pos);
+                                    }
+                                    $type = explode("/", $type);
+                                    if(!is_array($type) || count($type) < 2) {
+                                        $aMsg['content-type'] = array('text','plain');
+                                    } else {
+                                        $aMsg['content-type'] = array(strtolower($type[0]),strtolower($type[1]));
+                                    }
+}
+function funzioneCaseBODY2(){
+                $i = strpos($read,'{',$i);
+                $header = parseString($read,$i);
+                if ($header === false) goto m;
+                /* First we replace all \r\n by \n, and unfold the header */
+                $hdr = trim(str_replace(array("\r\n", "\n\t", "\n "),array("\n", ' ', ' '), $header));
+                /* Now we can make a new header array with */
+                /* each element representing a headerline  */
+                $hdr = explode("\n" , $hdr);
+                foreach ($hdr as $line) {
+                    $pos = strpos($line, ':');
+                    if ($pos > 0) {
+                        $field = strtolower(substr($line, 0, $pos));
+                        if (!strstr($field,' ')) { /* valid field */
+                            $value = trim(substr($line, $pos+1));
+                            switch($field)
+                            {
+                            case 'to': $to = $value; break;
+                            case 'cc': $cc = $value; break;
+                            case 'from': $from = $value; break;
+                            case 'date': $date = $value; break;
+                            case 'x-priority':
+                            case 'importance':
+                            case 'priority':
+                                $priority = parsePriority($value); break;
+                            case 'subject':
+                                $subject = $value;
+                                if ($subject == "") {
+                                    $subject = _("(no subject)");
+                                }
+                                break;
+                            case 'content-type':
+                                funzioneCaseContentType2();
+                                break;
+                            default: break;
+                            }
+                        }
+                    }
+                }
+}
+function funzioneCaseContentType2(){
+                                $type = strtolower($value);
+                                if ($pos = strpos($type, ";")) {
+                                    $type = substr($type, 0, $pos);
+                                }
+                                $type = explode("/", $type);
+                                if ( empty($type[0]) ) {
+                                    $type[0] = 'text';
+// I had this added, but not committed to CVS.... did it help fix something?
+//                                    $type[1] = 'plain';
+                                }
+                                if ( empty($type[1]) ) {
+                                    $type[1] = 'plain';
+                                }
+}

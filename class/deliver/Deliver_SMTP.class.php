@@ -18,6 +18,9 @@
  * Deliver messages using SMTP
  * @package squirrelmail
  */
+
+
+        
 class Deliver_SMTP extends Deliver {
 
     function preWriteToStream(&$s) {
@@ -26,8 +29,15 @@ class Deliver_SMTP extends Deliver {
             $s = str_replace("\n.","\n..",$s);
         }
     }
-
-    function initStream($message, $domain, $length=0, $host='', $port='', $user='', $pass='', $authpop=false, $pop_host='') {
+    
+    public $pass ='';
+    public $authpop=false;
+    public $pop_host='';
+    
+    function initStream($message, $domain, $length=0, $host='', $port='', $user='') {
+        $pass = $this->pass;
+        $authpop= $this->authpop;
+        $pop_host = $this->pop_host;
         echo $length;
         global $use_smtp_tls, $smtp_auth_mech;
 

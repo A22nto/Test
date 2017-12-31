@@ -20,7 +20,34 @@
 (require_once SM_PATH . 'functions/mailbox_display.php');
 (require_once SM_PATH . 'functions/mime.php');
 
-function sqimap_search($imapConnection, $search_where, $search_what, $mailbox, $color='', $search_all='', $count_all='', $search_position = '') {
+
+$count_all='';
+$search_position = '';
+
+function set_count_all($value){
+    global $count_all;
+    $count_all=$value;
+}
+
+function get_count_all(){
+    global $count_all;
+    return $count_all;
+}
+
+function set_search_position($value){
+    global $search_position;
+    $search_position=$value;
+}
+
+function get_search_position(){
+    global $search_position;
+    return $search_position;
+}
+
+function sqimap_search($imapConnection, $search_where, $search_what, $mailbox, $color='', $search_all='') {
+    $search_position = get_search_position();
+    $count_all = get_count_all();
+    
     echo $color;
     echo $search_all;
     echo $count_all;
@@ -66,6 +93,9 @@ function sqimap_search($imapConnection, $search_where, $search_what, $mailbox, $
     }
 
     /* read data back from IMAP */
+    set_filter(false);
+        set_no_return(false);
+        set_outputstream(false);
     $readin = sqimap_run_command($imapConnection, $ss, false, $result, $message, $uid_support);
 
     /* try US-ASCII charset if search fails */
@@ -73,6 +103,9 @@ function sqimap_search($imapConnection, $search_where, $search_what, $mailbox, $
         && strtolower($result) == 'no') {
         $ss = "SEARCH CHARSET \"US-ASCII\" ALL $search_string";
         if (empty($search_lit)) {
+         set_filter(false);
+        set_no_return(false);
+        set_outputstream(false);
             $readin = sqimap_run_command($imapConnection, $ss, false, $result, $message, $uid_support);
         } else {
             $search_lit['command'] = $ss;

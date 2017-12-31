@@ -91,6 +91,9 @@ function walkTreeInPreOrderEmptyTrash($index, $imap_stream, $tree) {
             if ($mbx_response['EXISTS'] > 0) {
                sqimap_messages_flag ($imap_stream, 1, '*', 'Deleted', true);
                // CLOSE === EXPUNGE and UNSELECT
+                 set_filter(false);
+                 set_no_return(false);
+                 set_outputstream(false);
                sqimap_run_command($imap_stream,'CLOSE',false,$response,$message);
             }
         }
@@ -102,6 +105,9 @@ function walkTreeInPreOrderEmptyTrash($index, $imap_stream, $tree) {
             if ($mbx_response['EXISTS'] > 0) {
                 sqimap_messages_flag ($imap_stream, 1, '*', 'Deleted', true);
                 // CLOSE === EXPUNGE and UNSELECT
+                  set_filter(false);
+                  set_no_return(false);
+                  set_outputstream(false);
                 sqimap_run_command($imap_stream,'CLOSE',false,$response,$message);
             }
         }
@@ -148,6 +154,9 @@ function walkTreeInPostOrderCreatingFoldersUnderTrash($index, $imap_stream, $tre
             sqimap_msgs_list_copy($imap_stream, '1:*', $trash_folder . $delimiter . $subFolderName, $uid_support);
         }
         // after copy close the mailbox to get in unselected state
+        set_filter(false);
+        set_no_return(false);
+        set_outputstream(false);
         sqimap_run_command($imap_stream,'CLOSE',false,$response,$message);
         for ($j = 0;$j < count($tree[$index]['subNodes']); $j++)
             walkTreeInPostOrderCreatingFoldersUnderTrash($tree[$index]['subNodes'][$j], $imap_stream, $tree, $topFolderName, $uid_support);
@@ -159,6 +168,9 @@ function walkTreeInPostOrderCreatingFoldersUnderTrash($index, $imap_stream, $tre
             sqimap_msgs_list_copy($imap_stream, '1:*', $trash_folder . $delimiter . $subFolderName, $uid_support);
         }
         // after copy close the mailbox to get in unselected state
+        set_filter(false);
+        set_no_return(false);
+        set_outputstream(false);
         sqimap_run_command($imap_stream,'CLOSE',false,$response,$message);
     }
 }
