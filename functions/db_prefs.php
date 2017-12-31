@@ -36,6 +36,10 @@ define('SMDB_MYSQL', 1);
 /** PostgreSQL */
 define('SMDB_PGSQL', 2);
 
+if(isset($GLOBALS)){
+VarHelper::$glb = &$GLOBALS;
+}
+
 if (!(include_once 'DB.php')) {
     // same error also in abook_database.php
     (require_once SM_PATH . 'functions/display_messages.php');
@@ -52,13 +56,13 @@ global $prefs_are_cached, $prefs_cache;
 /**
  * @ignore
  */
-VarHelper::$prefs_are_cached = $GLOBALS['prefs_are_cached'];
-VarHelper::$prefs_cache = $GLOBALS['prefs_cache'];
+
+
 
 function cachePrefValues($username) {
-    
-$prefs_are_cached = VarHelper::$prefs_are_cached;
-$prefs_cache = VarHelper::$prefs_cache;
+    $glb = &VarHelper::$glb;
+$prefs_are_cached = &$glb['prefs_are_cached'];
+$prefs_cache = &$glb['prefs_cache'];
 
     sqgetGlobalVar('prefs_are_cached', $prefs_are_cached, SQ_SESSION );
     if ($prefs_are_cached) {
@@ -93,11 +97,11 @@ $prefs_cache = VarHelper::$prefs_cache;
  * Completely undocumented class - someone document it!
  * @package squirrelmail
  */
-VarHelper::$prefs_dsn = $GLOBALS['prefs_dsn'];
-VarHelper::$prefs_table = $GLOBALS['prefs_table'];
-VarHelper::$prefs_user_field = $GLOBALS['prefs_user_field'];
-VarHelper::$prefs_key_field = $GLOBALS['prefs_key_field'];
-VarHelper::$prefs_val_field = $GLOBALS['prefs_val_field'];
+
+
+
+
+
 class dbPrefs {
     var $table = 'userprefs';
     var $user_field = 'user';
@@ -113,11 +117,12 @@ class dbPrefs {
 
     
     function open() {
-        $prefs_dsn = VarHelper::$prefs_dsn;
-$prefs_table = VarHelper::$prefs_table;
-$prefs_user_field = VarHelper::$prefs_user_field;
-$prefs_key_field = VarHelper::$prefs_key_field;
-$prefs_val_field = VarHelper::$prefs_val_field;
+        $glb = &VarHelper::$glb;
+        $prefs_dsn = &$glb['prefs_dsn'];
+$prefs_table = &$glb['prefs_table'];
+$prefs_user_field = &$glb['prefs_user_field'];
+$prefs_key_field = &$glb['prefs_key_field'];
+$prefs_val_field = &$glb['prefs_val_field'];
 
         if(isset($this->dbh)) {
             return true;
@@ -173,7 +178,8 @@ $prefs_val_field = VarHelper::$prefs_val_field;
 
 
     function getKey($user, $key, $default = '') {
-        $prefs_cache = VarHelper::$prefs_cache;
+        $glb = &VarHelper::$glb;
+        $prefs_cache = &$glb['prefs_cache'];
 
         $result = do_hook_function('get_pref_override', array($user, $key));
 //FIXME: testing below for !$result means that a plugin cannot fetch its own pref value of 0, '0', '', FALSE, or anything else that evaluates to boolean FALSE.
@@ -199,7 +205,8 @@ $prefs_val_field = VarHelper::$prefs_val_field;
     }
 
     function deleteKey($user, $key) {
-        $prefs_cache = VarHelper::$prefs_cache;
+        $glb = &VarHelper::$glb;
+        $prefs_cache = &$glb['prefs_cache'];
 
         if (!$this->open()) {
             return false;
@@ -296,7 +303,8 @@ $prefs_val_field = VarHelper::$prefs_val_field;
     }
 
     function fillPrefsCache($user) {
-        $prefs_cache = VarHelper::$prefs_cache;
+        $glb = &VarHelper::$glb;
+        $prefs_cache = &$glb['prefs_cache'];
 
         if (!$this->open()) {
             return;
@@ -345,7 +353,8 @@ function getPref($data_dir, $username, $string, $default = '') {
  */
 function removePref($data_dir, $username, $string) {
     echo htmlspecialchars($data_dir);
-     $prefs_cache = VarHelper::$prefs_cache;
+    $glb = &VarHelper::$glb;
+     $prefs_cache = &$glb['prefs_cache'];
     $db = new dbPrefs;
     if(isset($db->error)) {
         $db->failQuery();
@@ -367,7 +376,8 @@ function removePref($data_dir, $username, $string) {
  * @ignore
  */
 function setPref($data_dir, $username, $string, $set_to) {
-     $prefs_cache = VarHelper::$prefs_cache;
+    $glb = &VarHelper::$glb;
+     $prefs_cache = &$glb['prefs_cache'];
 
     if (isset($prefs_cache[$string]) && ($prefs_cache[$string] == $set_to)) {
         return;

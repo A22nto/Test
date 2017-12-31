@@ -28,38 +28,39 @@ global $addrbook_dsn, $addrbook_global_dsn;
   Create and initialize an addressbook object.
   Returns the created object
  */
-VarHelper::$data_dir = $GLOBALS['data_dir'];
-VarHelper::$username = $GLOBALS['username'];
-VarHelper::$color = $GLOBALS['color'];
-VarHelper::$ldap_server = $GLOBALS['ldap_server'];
-VarHelper::$address_book_global_filename = $GLOBALS['address_book_global_filename'];
-VarHelper::$addrbook_dsn = $GLOBALS['addrbook_dsn'];
-VarHelper::$addrbook_table = $GLOBALS['addrbook_table'];
-VarHelper::$abook_global_file = $GLOBALS['abook_global_file'];
-VarHelper::$abook_global_file_writeable = $GLOBALS['abook_global_file_writeable'];
-VarHelper::$abook_global_file_listing = $GLOBALS['abook_global_file_listing'];
-VarHelper::$addrbook_global_dsn = $GLOBALS['addrbook_global_dsn'];
-VarHelper::$addrbook_global_table = $GLOBALS['addrbook_global_table'];
-VarHelper::$addrbook_global_writeable = $GLOBALS['addrbook_global_writeable'];
-VarHelper::$addrbook_global_listing = $GLOBALS['addrbook_global_listing'];
-VarHelper::$abook_file_line_length = $GLOBALS['abook_file_line_length'];
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function addressbook_init($showerr = true, $onlylocal = false) {
-    $data_dir = VarHelper::$data_dir;
-    $username = VarHelper::$username;
-    $color = VarHelper::$color;
-    $ldap_server = VarHelper::$ldap_server;
+    $glb = &VarHelper::$glb;
+    $data_dir = &$glb['data_dir'];
+    $username = &$glb['username'];
+    $color = &$glb['color'];
+    $ldap_server = &$glb['ldap_server'];
     
-    $addrbook_dsn = VarHelper::$addrbook_dsn;
-    $addrbook_table = VarHelper::$addrbook_table;
-    $abook_global_file = VarHelper::$abook_global_file;
-    $abook_global_file_writeable = VarHelper::$abook_global_file_writeable;
-    $abook_global_file_listing = VarHelper::$abook_global_file_listing;
-    $addrbook_global_dsn = VarHelper::$addrbook_global_dsn;
-    $addrbook_global_table = VarHelper::$addrbook_global_table;
-    $addrbook_global_writeable = VarHelper::$addrbook_global_writeable;
-    $addrbook_global_listing = VarHelper::$addrbook_global_listing;
-    $abook_file_line_length = VarHelper::$abook_file_line_length;
+    $addrbook_dsn = &$glb['addrbook_dsn'];
+    $addrbook_table = &$glb['addrbook_table'];
+    $abook_global_file = &$glb['abook_global_file'];
+    $abook_global_file_writeable = &$glb['abook_global_file_writeable'];
+    $abook_global_file_listing = &$glb['abook_global_file_listing'];
+    $addrbook_global_dsn = &$glb['addrbook_global_dsn'];
+    $addrbook_global_table = &$glb['addrbook_global_table'];
+    $addrbook_global_writeable = &$glb['addrbook_global_writeable'];
+    $addrbook_global_listing = &$glb['addrbook_global_listing'];
+    $abook_file_line_length = &$glb['abook_file_line_length'];
 
     /* Create a new addressbook object */
     $abook = new AddressBook;
@@ -249,8 +250,9 @@ function alistcmp($a, $b) {
  * @return integer book sorting options order
  */
 function get_abook_sort() {
-    $data_dir = VarHelper::$data_dir;
-    $username = VarHelper::$username;
+    $glb = &VarHelper::$glb;
+    $data_dir = &$glb['data_dir'];
+    $username = &$glb['username'];
 
     /* get sorting order */
     if (sqgetGlobalVar('abook_sort_order', $temp, SQ_GET)) {
@@ -278,10 +280,11 @@ function get_abook_sort() {
  * @return string html code with sorting images and urls
  * @since 1.5.1 and 1.4.6
  */
-VarHelper::$form_url = $GLOBALS['form_url'];
+
 
 function show_abook_sort_button($abook_sort_order, $alt_tag, $Down, $Up) {
-    $form_url = VarHelper::$form_url;
+    $glb = &VarHelper::$glb;
+    $form_url = &$glb['form_url'];
 
     /* Figure out which image we want to use. */
     if ($abook_sort_order != $Up && $abook_sort_order != $Down) {
@@ -375,8 +378,9 @@ class AddressBook {
      */
 
     function full_address($row) {
-        $data_dir = VarHelper::$data_dir;
-        $username = VarHelper::$username;
+        $glb = &VarHelper::$glb;
+        $data_dir = &$glb['data_dir'];
+        $username = &$glb['username'];
         $addrsrch_fullname = getPref($data_dir, $username, 'addrsrch_fullname', 'fullname');
 
         // allow multiple addresses in one row (poor person's grouping - bah)

@@ -16,7 +16,9 @@
 (require_once SM_PATH . 'functions/page_header.php');
 (require_once SM_PATH . 'functions/auth.php');
 
-
+if(isset($GLOBALS)){
+VarHelper::$glb = &$GLOBALS;
+}
 /**
  * Generates a new session ID by incrementing the last one used;
  * this ensures that each command has a unique ID.
@@ -37,9 +39,10 @@ function sqimap_session_id($unique_id = FALSE) {
  * Both send a command and accept the result from the command.
  * This is to allow proper session number handling.
  */
-VarHelper::$squirrelmail_language = $GLOBALS['squirrelmail_language'];
-VarHelper::$color = $GLOBALS['color'];
+
+
 function sqimap_run_command_list ($imap_stream, $query, $handle_errors, &$response, &$message, $unique_id = false) {
+    $glb = &VarHelper::$glb;
     if ($imap_stream) {
         include_once __DIR__ . '/libs/csrf/csrfprotector.php';
         csrfProtector::init();
@@ -52,8 +55,8 @@ function sqimap_run_command_list ($imap_stream, $query, $handle_errors, &$respon
         return $read;
     } else {
         
-$squirrelmail_language = VarHelper::$squirrelmail_language;
-$color = VarHelper::$color;
+$squirrelmail_language = &$glb['squirrelmail_language']; 
+$color = &$glb['color']; 
         set_up_language($squirrelmail_language);
         (require_once SM_PATH . 'functions/display_messages.php');
         $string = "<b><font color=\"$color[2]\">\n" .
@@ -80,9 +83,9 @@ function sqimap_run_command ($imap_stream, $query, $handle_errors, &$response,&$
                                   $message, $query,$filter,$outputstream,$no_return);
         return $read;
     } else {
-        
-$squirrelmail_language = VarHelper::$squirrelmail_language;
-$color = VarHelper::$color;
+    $glb = &VarHelper::$glb;    
+$squirrelmail_language = &$glb['squirrelmail_language']; 
+$color = &$glb['color']; 
         set_up_language($squirrelmail_language);
         (require_once SM_PATH . 'functions/display_messages.php');
         $string = "<b><font color=\"$color[2]\">\n" .
@@ -126,9 +129,9 @@ function sqimap_run_literal_command($imap_stream, $query, $handle_errors, &$resp
         }
         return $read;
     } else {
-        
-$squirrelmail_language = VarHelper::$squirrelmail_language;
-$color = VarHelper::$color;
+      $glb = &VarHelper::$glb;  
+$squirrelmail_language = &$glb['squirrelmail_language']; 
+$color = &$glb['color']; 
         set_up_language($squirrelmail_language);
         (require_once SM_PATH . 'functions/display_messages.php');
         $string = "<b><font color=\"$color[2]\">\n" .
@@ -257,13 +260,13 @@ function get_no_return(){
  * this will also handle all errors that are received.  If it is not set,
  * the errors will be sent back through $response and $message.
  */
-VarHelper::$color = $GLOBALS['color'];
-VarHelper::$squirrelmail_language = $GLOBALS['squirrelmail_language'];
+
+
 function sqimap_read_data_list ($imap_stream, $tag_uid, $handle_errors,
           &$response, &$message, $query = ''){
-    
-    $color = VarHelper::$color;
-$squirrelmail_language = VarHelper::$squirrelmail_language;
+    $glb = &VarHelper::$glb;
+    $color = &$glb['color']; 
+$squirrelmail_language = &$glb['squirrelmail_language']; 
     $filter = get_filter();
     $outputstream= get_outputstream();
     $no_return = get_no_return();
@@ -529,17 +532,18 @@ function sqimap_read_data ($imap_stream, $tag_uid, $handle_errors,
  * will be displayed.  This function returns the IMAP connection handle.
  */
 
-VarHelper::$color = $GLOBALS['color'];
-VarHelper::$squirrelmail_language = $GLOBALS['squirrelmail_language'];
-VarHelper::$onetimepad = $GLOBALS['onetimepad'];
-VarHelper::$use_imap_tls = $GLOBALS['use_imap_tls'];
-VarHelper::$imap_auth_mech = $GLOBALS['imap_auth_mech'];
+
+
+
+
+
 function sqimap_login ($username, $password, $imap_server_address, $imap_port, $hide) {
-    $color = VarHelper::$color;
-$squirrelmail_language = VarHelper::$squirrelmail_language;
-$onetimepad = VarHelper::$onetimepad;
-$use_imap_tls = VarHelper::$use_imap_tls;
-$imap_auth_mech = VarHelper::$imap_auth_mech;
+    $glb = &VarHelper::$glb;
+    $color = &$glb['color']; 
+$squirrelmail_language = &$glb['squirrelmail_language']; 
+$onetimepad = &$glb['onetimepad']; 
+$use_imap_tls = &$glb['use_imap_tls']; 
+$imap_auth_mech = &$glb['imap_auth_mech']; 
 
     if (!isset($onetimepad) || empty($onetimepad)) {
         sqgetglobalvar('onetimepad' , $onetimepad , SQ_SESSION );
@@ -719,9 +723,10 @@ function sqimap_logout ($imap_stream) {
  * If capability is set, returns only that specific capability,
  * else returns array of all capabilities.
  */
-VarHelper::$sqimap_capabilities = $GLOBALS['sqimap_capabilities'];
+
 function sqimap_capability($imap_stream, $capability='') {
-    $sqimap_capabilities = VarHelper::$sqimap_capabilities;
+    $glb = &VarHelper::$glb;
+    $sqimap_capabilities = &$glb['sqimap_capabilities']; 
     if (!is_array($sqimap_capabilities)) {
         set_filter(false);
         set_no_return(false);
@@ -753,11 +758,12 @@ function sqimap_capability($imap_stream, $capability='') {
 /**
  * Returns the delimeter between mailboxes: INBOX/Test, or INBOX.Test
  */
-VarHelper::$sqimap_delimiter = $GLOBALS['sqimap_delimiter'];
-VarHelper::$optional_delimiter = $GLOBALS['optional_delimiter'];
+
+
 function sqimap_get_delimiter ($imap_stream = false) {
-    $sqimap_delimiter = VarHelper::$sqimap_delimiter;
-$optional_delimiter = VarHelper::$optional_delimiter;
+    $glb = &VarHelper::$glb;
+    $sqimap_delimiter = &$glb['sqimap_delimiter']; 
+$optional_delimiter = &$glb['optional_delimiter']; 
 
     /* Use configured delimiter if set */
     if((!empty($optional_delimiter)) && $optional_delimiter != 'detect') {
@@ -1048,13 +1054,13 @@ function sqimap_append_done ($imap_stream, $folder='') {
     sqimap_append_checkresponse($tmp, $folder);
 }
 
-VarHelper::$squirrelmail_language = $GLOBALS['squirrelmail_language'];
-VarHelper::$color = $GLOBALS['color'];
-function sqimap_append_checkresponse($response, $folder) {
 
+
+function sqimap_append_checkresponse($response, $folder) {
+$glb = &VarHelper::$glb;
     if (preg_match("/(.*)(BAD|NO)(.*)$/", $response, $regs)) {
-        $squirrelmail_language = VarHelper::$squirrelmail_language;
-$color = VarHelper::$color;
+        $squirrelmail_language = &$glb['squirrelmail_language']; 
+$color = &$glb['color']; 
         set_up_language($squirrelmail_language);
         (require_once SM_PATH . 'functions/display_messages.php');
 

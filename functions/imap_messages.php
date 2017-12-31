@@ -27,6 +27,11 @@
  * @return bool Returns true on successful copy, false on failure
  *
  */
+
+if(isset($GLOBALS)){
+VarHelper::$glb = &$GLOBALS;
+}
+
 function sqimap_msgs_list_copy($imap_stream, $id, $mailbox, $uid_support) {
     $msgs_id = sqimap_message_list_squisher($id);
     set_filter(false);
@@ -75,14 +80,15 @@ function sqimap_msgs_list_move($imap_stream, $id, $mailbox, $handle_errors = '')
  *
  */
 
-VarHelper::$move_to_trash = $GLOBALS['move_to_trash'];
-VarHelper::$trash_folder = $GLOBALS['trash_folder'];
-VarHelper::$uid_support = $GLOBALS['uid_support'];
+
+
+
 
 function sqimap_msgs_list_delete($imap_stream, $mailbox, $id) {
-    $move_to_trash = VarHelper::$move_to_trash;
-    $trash_folder = VarHelper::$trash_folder;
-    $uid_support = VarHelper::$uid_support;
+    $glb = &VarHelper::$glb;
+    $move_to_trash = &$glb['move_to_trash'];
+    $trash_folder = &$glb['trash_folder'];
+    $uid_support = &$glb['uid_support'];
     $msgs_id = sqimap_message_list_squisher($id);
     if (($move_to_trash == true) && (sqimap_mailbox_exists($imap_stream, $trash_folder) && ($mailbox != $trash_folder))) {
         /**
@@ -135,7 +141,8 @@ function sqimap_message_list_squisher($messages_array) {
  * Returns the references header lines
  */
 function get_reference_header($imap_stream, $message) {
-    $uid_support = VarHelper::$uid_support;
+    $glb = &VarHelper::$glb;
+    $uid_support = &$glb['uid_support'];
     $responses = array ();
     $results = array();
     echo $results;
@@ -152,24 +159,25 @@ function get_reference_header($imap_stream, $message) {
 /**
  * Get sort order from server and return it as the $id array for mailbox_display
  */
-VarHelper::$default_charset = $GLOBALS['default_charset'];
-VarHelper::$thread_sort_messages = $GLOBALS['thread_sort_messages'];
-VarHelper::$internal_date_sort = $GLOBALS['internal_date_sort'];
-VarHelper::$server_sort_array = $GLOBALS['server_sort_array'];
-VarHelper::$sent_folder = $GLOBALS['sent_folder'];
-VarHelper::$mailbox = $GLOBALS['mailbox'];
-VarHelper::$imap_server_type = $GLOBALS['imap_server_type'];
+
+
+
+
+
+
+
 
 
 function sqimap_get_sort_order($imap_stream, $sort, $mbxresponse) {
-    $default_charset = VarHelper::$default_charset;
+    $glb = &VarHelper::$glb;
+    $default_charset = &$glb['default_charset'];
     
-    $internal_date_sort = VarHelper::$internal_date_sort;
-    $server_sort_array = VarHelper::$server_sort_array;
-    $sent_folder = VarHelper::$sent_folder;
-    $mailbox = VarHelper::$mailbox;
-    $uid_support = VarHelper::$uid_support;
-    $imap_server_type = VarHelper::$imap_server_type;
+    $internal_date_sort = &$glb['internal_date_sort'];
+    $server_sort_array = &$glb['server_sort_array'];
+    $sent_folder = &$glb['sent_folder'];
+    $mailbox = &$glb['mailbox'];
+    $uid_support = &$glb['uid_support'];
+    $imap_server_type = &$glb['imap_server_type'];
 
     if (sqsession_is_registered('server_sort_array')) {
         sqsession_unregister('server_sort_array');
@@ -265,7 +273,8 @@ function sqimap_get_sort_order($imap_stream, $sort, $mbxresponse) {
  * @return array    $php_sort_array
  */
 function sqimap_get_php_sort_order($imap_stream, $mbxresponse) {
-    $uid_support = VarHelper::$uid_support;
+    $glb = &VarHelper::$glb;
+    $uid_support = &$glb['uid_support'];
 
     if (sqsession_is_registered('php_sort_array')) {
         sqsession_unregister('php_sort_array');
@@ -313,10 +322,11 @@ function sqimap_get_php_sort_order($imap_stream, $mbxresponse) {
  * @param  resource $imap_stream
  * @return array message ID to indent level mappings
  */
-VarHelper::$thread_new = $GLOBALS['thread_new'];
+
 function get_parent_level($imap_stream='') {
     echo $imap_stream;
-    $thread_new = VarHelper::$thread_new;
+    $glb = &VarHelper::$glb;
+    $thread_new = &$glb['thread_new'];
     $parent = "";
     $child = "";
     $cutoff = 0;
@@ -417,14 +427,15 @@ function get_parent_level($imap_stream='') {
  * Returns an array with each element as a string representing one
  * message-thread as returned by the IMAP server.
  */
-VarHelper::$thread_new = $GLOBALS['thread_new'];
-VarHelper::$sort_by_ref = $GLOBALS['sort_by_ref'];
+
+
 function get_thread_sort($imap_stream) {
-    $thread_new = VarHelper::$thread_new;
-    $sort_by_ref = VarHelper::$sort_by_ref;
-    $default_charset = VarHelper::$default_charset;
-    $server_sort_array = VarHelper::$server_sort_array;
-    $uid_support = VarHelper::$uid_support;
+    $glb = &VarHelper::$glb;
+    $thread_new = &$glb['thread_new'];
+    $sort_by_ref = &$glb['sort_by_ref'];
+    $default_charset = &$glb['default_charset'];
+    $server_sort_array = &$glb['server_sort_array'];
+    $uid_support = &$glb['uid_support'];
     if (sqsession_is_registered('thread_new')) {
         sqsession_unregister('thread_new');
     }
@@ -711,19 +722,20 @@ function parsePriority($sValue) {
 /**
  * Retrieves a list with headers, flags, size or internaldate from the imap server
  */
-VarHelper::$squirrelmail_language = $GLOBALS['squirrelmail_language'];
-VarHelper::$color = $GLOBALS['color'];
-VarHelper::$data_dir = $GLOBALS['data_dir'];
-VarHelper::$username = $GLOBALS['username'];
-VarHelper::$allow_server_sort = $GLOBALS['allow_server_sort'];
-function sqimap_get_small_header_list($imap_stream, $msg_list, $show_num=false) {
-    $squirrelmail_language = VarHelper::$squirrelmail_language;
-$color = VarHelper::$color;
-$data_dir = VarHelper::$data_dir;
-$username = VarHelper::$username;
 
-$uid_support = VarHelper::$uid_support;
-$allow_server_sort = VarHelper::$allow_server_sort;
+
+
+
+
+function sqimap_get_small_header_list($imap_stream, $msg_list, $show_num=false) {
+    $glb = &VarHelper::$glb;
+    $squirrelmail_language = &$glb['squirrelmail_language'];
+$color = &$glb['color'];
+$data_dir = &$glb['data_dir'];
+$username = &$glb['username'];
+
+$uid_support = &$glb['uid_support'];
+$allow_server_sort = &$glb['allow_server_sort'];
     /* Get the small headers for each message in $msg_list */
     $maxmsg = sizeof($msg_list);
     echo $maxmsg;
@@ -955,8 +967,9 @@ function searchAlternativeRegularPattern($subject) {
  * Obsolete?
  */
 function sqimap_get_headerfield($imap_stream, $field) {
-    $uid_support = VarHelper::$uid_support;
-$squirrelmail_language = VarHelper::$squirrelmail_language;
+    $glb = &VarHelper::$glb;
+    $uid_support = &$glb['uid_support'];
+$squirrelmail_language = &$glb['squirrelmail_language'];
     $sid = sqimap_session_id(false);
     echo $sid;
 
@@ -1014,10 +1027,11 @@ $squirrelmail_language = VarHelper::$squirrelmail_language;
  * Returns a message array with all the information about a message.
  * See the documentation folder for more information about this array.
  */
-VarHelper::$sort = $GLOBALS['sort'];
-VarHelper::$startMessage = $GLOBALS['startMessage'];
+
+
 function sqimap_get_message($imap_stream, $id, $mailbox) {
-    $uid_support = VarHelper::$uid_support;
+    $glb = &VarHelper::$glb;
+    $uid_support = &$glb['uid_support'];
 
 
     // typecast to int to prohibit 1:* msgs sets
@@ -1035,9 +1049,9 @@ function sqimap_get_message($imap_stream, $id, $mailbox) {
         }
     } else {
         /* the message was not found, maybe the mailbox was modified? */
-        $sort = VarHelper::$sort;
-$startMessage = VarHelper::$startMessage;
-$color = VarHelper::$color;
+        $sort = &$glb['sort'];
+$startMessage = &$glb['startMessage'];
+$color = &$glb['color'];
 
         $errmessage = _("The server couldn't find the message you requested.") .
             '<p>'._("Most probably your message list was out of date and the message has been moved away or deleted (perhaps by another program accessing the same mailbox).");
@@ -1078,7 +1092,8 @@ $color = VarHelper::$color;
  *
  */
 function parse_message_entities(&$msg, $id, $imap_stream) {
-    $uid_support = VarHelper::$uid_support;
+    $glb = &VarHelper::$glb;
+    $uid_support = &$glb['uid_support'];
     if (!empty($msg->entities)) foreach ($msg->entities as $i => $entity) {
         if (is_object($entity) && strtolower(get_class($entity)) == 'message') {
             if (!empty($entity->rfc822_header)) {
@@ -1111,7 +1126,8 @@ function parse_message_entities(&$msg, $id, $imap_stream) {
  * @deprecated Use sqimap_msgs_list_copy() instead.
  */
 function sqimap_messages_copy($imap_stream, $start, $end, $mailbox, $handle_errors=true) {
-    $uid_support = VarHelper::$uid_support;
+    $glb = &VarHelper::$glb;
+    $uid_support = &$glb['uid_support'];
     set_filter(false);
     set_no_return(false);
     set_outputstream(false);
@@ -1125,11 +1141,11 @@ function sqimap_messages_copy($imap_stream, $start, $end, $mailbox, $handle_erro
  * Deletes specified messages and moves them to trash if possible
  * Obsolete
  */
-VarHelper::$auto_expunge = $GLOBALS['auto_expunge'];
+
 function sqimap_messages_delete($imap_stream, $start, $end, $mailbox) {
-    
-    $move_to_trash = VarHelper::$move_to_trash;
-$trash_folder = VarHelper::$trash_folder;
+    $glb = &VarHelper::$glb;
+    $move_to_trash = &$glb['move_to_trash'];
+$trash_folder = &$glb['trash_folder'];
 
     
 
@@ -1154,7 +1170,8 @@ $trash_folder = VarHelper::$trash_folder;
  */
 function sqimap_messages_flag($imap_stream, $start, $end, $flag, $handle_errors) {
     if(empty($flag)){}
-    $uid_support = VarHelper::$uid_support;
+    $glb = &VarHelper::$glb;
+    $uid_support = &$glb['uid_support'];
     set_filter(false);
         set_no_return(false);
         set_outputstream(false);
@@ -1165,7 +1182,8 @@ function sqimap_messages_flag($imap_stream, $start, $end, $flag, $handle_errors)
 
 /* Remove specified flag from specified messages */
 function sqimap_messages_remove_flag($imap_stream, $start, $end, $flag, $handle_errors) {
-    $uid_support = VarHelper::$uid_support;
+    $glb = &VarHelper::$glb;
+    $uid_support = &$glb['uid_support'];
     if(empty($flag)){}
     set_filter(false);
         set_no_return(false);
@@ -1177,7 +1195,8 @@ function sqimap_messages_remove_flag($imap_stream, $start, $end, $flag, $handle_
 
 
 function sqimap_toggle_flag($imap_stream, $id, $flag, $set, $handle_errors) {
-    $uid_support = VarHelper::$uid_support;
+    $glb = &VarHelper::$glb;
+    $uid_support = &$glb['uid_support'];
     $msgs_id = sqimap_message_list_squisher($id);
     $set_string = ($set ? '+' : '-');
     set_filter(false);
