@@ -39,7 +39,9 @@ class Deliver_SMTP extends Deliver {
         $authpop= $this->authpop;
         $pop_host = $this->pop_host;
         echo $length;
-        global $use_smtp_tls, $smtp_auth_mech;
+        $use_smtp_tls = &$GLOBALS['use_smtp_tls'];
+        $smtp_auth_mech = &$GLOBALS['smtp_auth_mech'];
+    
 
         if ($authpop) {
             $a=$this->authPop($user, $pass, $pop_host, '');
